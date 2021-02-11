@@ -1,0 +1,17 @@
+{
+    "name": "nepster-web/simple-queue",
+    "description": "Simple queues implementation in PHP through database.",
+    "keywords": [
+        "php",
+        "queue",
+        "simple-queue",
+        "dbal queue",
+        "datbase queue",
+        "consumer"
+    ],
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+
+    ]
+}
