@@ -1,17 +1,45 @@
 {
-    "name": "nepster-web/simple-queue",
-    "description": "Simple queues implementation in PHP through database.",
-    "keywords": [
-        "php",
-        "queue",
-        "simple-queue",
-        "dbal queue",
-        "datbase queue",
-        "consumer"
-    ],
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "authors": [
-
-    ]
+  "name": "nepster-web/simple-queue",
+  "description": "Simple queues implementation in PHP through database.",
+  "keywords": [
+    "php",
+    "queue",
+    "simple-queue",
+    "dbal queue",
+    "datbase queue",
+    "consumer"
+  ],
+  "support": {
+    "docs": "https://github.com/nepster-web/simple-queue/blob/main/docs/guide/README.md",
+    "issues": "https://github.com/nepster-web/simple-queue/issues",
+    "source": "https://github.com/nepster-web/simple-queue",
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "license": "MIT",
+  "authors": [
+  ],
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~7.2 || ^8.0",
+    "ext-PDO": "*",
+    "ext-json": "*",
+    "doctrine/dbal": "^3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Simple\\Queue\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Simple\\Queue\\Test": "test/"
+    }
+  }
 }
