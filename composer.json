@@ -39,7 +39,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Simple\\Queue\\Test\\": "test/"
+      "Simple\\QueueTest\\": "tests/"
     }
   }
 }
