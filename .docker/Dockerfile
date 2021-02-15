@@ -13,7 +13,8 @@ RUN apk update && apk add --no-cache \
     wget \
     unzip \
     openssh \
-    libzip-dev
+    libzip-dev \
+    shadow
 
 RUN docker-php-ext-install \
         mysqli
@@ -23,3 +24,5 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Set IDs from our local user
 RUN usermod -u ${USER_ID} www-data && groupmod -g ${GROUP_ID} www-data || true
 USER "${USER_ID}:${GROUP_ID}"
+
+WORKDIR /app
