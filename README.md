@@ -1,33 +1,22 @@
 <p align="center">
     <h1 align="center">PHP Simple Queue</h1>
-    <br>
 </p>
-
-An extension for running tasks asynchronously via queues.
-
-It supports queues based on **DB**.
-
-
-
-- The minimum required PHP version of PHP Simple Queue is PHP 7.2.
-- It works best with PHP 8.
-- [Follow the Definitive Guide](./docs/guide/README.md)
-  in order to get step by step instructions.
-
-
-
-Requirements
-------------
-
-You'll need at least PHP 7.4.
 
 
 Introduction
 ------------
 
-**Enqueue** is production ready, battle-tested messaging solution for PHP. Provides a common way for programs to create, send, read messages.
+**PHP Simple Queue** - a library for running tasks asynchronously via queues.
+It supports queues based on **DB**. It is production ready, battle-tested a simple
+messaging solution for PHP.
 
-This is a main development repository. It provides a friendly environment for productive development and testing of all Enqueue related features&packages.
+This is a main development repository.
+
+
+Requirements
+------------
+
+You'll need at least PHP 7.4. (It works best with PHP 8).
 
 
 Installation
@@ -48,13 +37,12 @@ or add
 ```
 
 
-
-Basic Usage
------------
-
+:computer: Basic Usage
+----------------------
 
 
-## Testing
+
+### Testing
 
 To run the tests, in the root directory execute below.
 
@@ -63,7 +51,15 @@ To run the tests, in the root directory execute below.
 ```
 
 
-## Resources
+---------------------------------
+
+
+## :book: Documentation
+
+See [the official guide](./docs/guide/README.md).
+
+
+## :books: Resources
 
 * [Site](https://enqueue.forma-pro.com/)
 * [Documentation](./docs/guide/README.md)
@@ -71,6 +67,11 @@ To run the tests, in the root directory execute below.
 * [Issue Tracker](https://github.com/nepster-web/simple-queue/issues)
 
 
-## License
+## :newspaper: Changelog
 
-It is released under the [MIT License](LICENSE).
+Detailed changes for each release are documented in the [CHANGELOG.md](./CHANGELOG.md).
+
+
+## :lock: License
+
+See the [MIT License](LICENSE) file for license rights and limitations (MIT).
