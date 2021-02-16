@@ -7,16 +7,14 @@ Introduction
 ------------
 
 **PHP Simple Queue** - a library for running tasks asynchronously via queues.
-It supports queues based on **DB**. It is production ready, battle-tested a simple
-messaging solution for PHP.
+It is production ready, battle-tested a simple messaging solution for PHP.
 
-This is a main development repository.
-
+It supports queues based on **DB**.
 
 Requirements
 ------------
 
-You'll need at least PHP 7.4. (It works best with PHP 8).
+You'll need at least PHP 7.4 (it works best with PHP 8).
 
 
 Installation
@@ -61,7 +59,6 @@ See [the official guide](./docs/guide/README.md).
 
 ## :books: Resources
 
-* [Site](https://enqueue.forma-pro.com/)
 * [Documentation](./docs/guide/README.md)
 * [Example](./example)
 * [Issue Tracker](https://github.com/nepster-web/simple-queue/issues)

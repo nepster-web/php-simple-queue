@@ -1,9 +1,17 @@
-PHP Simple Queue
-================
+PHP Simple Queue Guide
+======================
 
-An extension for running tasks asynchronously via queues for PHP.
+**PHP Simple Queue** - a library for running tasks asynchronously via queues.
+It is production ready, battle-tested a simple messaging solution for PHP.
 
-Introduction
-------------
+It supports queues based on **DB**.
 
-* [Usage basics](usage.md)
+
+## :book: Guide
+---------------
+
+* [Install](./install.md)
+* [Usage basics](./usage.md)
+* [Example](./example.md)
+* [Cookbook](./cookbook.md)
+  

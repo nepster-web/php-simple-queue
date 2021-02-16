@@ -3,25 +3,25 @@ PHP Simple Queue Change Log
 
 A changelog of all notable changes made to this library.
 
-- ENH: Enhance or modify
-- BUG: fix error
+- *ENH*: Enhance or modify
+- *BUG*: fix error
 
 
-Upgrade to 0.0.1
+0.0.1 under development
 -------------------
 
 
-Upgrade to Beta
+Beta under development
 -------------------
 
 
-Upgrade to Alpha
+Alpha under development
 -------------------
 
 
 
-Release
--------------------
+Release February 15, 2021
+-------------------------
+ - *ENH*: add simple example with consume and produce
+ - *ENH*: ability to run example with docker
  - Initial release.
- - Enh: add simple example with consume and produce
- - Enh: ability to run example with docker
