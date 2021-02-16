@@ -48,6 +48,14 @@ class Priority
     }
 
     /**
+     * @return int
+     */
+    public function getValue(): int
+    {
+        return $this->priority;
+    }
+
+    /**
      * @return array
      */
     public static function getPriorities(): array

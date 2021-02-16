@@ -58,6 +58,14 @@ class Status
     }
 
     /**
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->status;
+    }
+
+    /**
      * @return array
      */
     public static function getStatuses(): array
