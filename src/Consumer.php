@@ -73,7 +73,7 @@ class Consumer
             try {
                 $deliveredMessage = $select->execute()->fetchAssociative();
 
-                if ($deliveredMessage === false) {
+                if (empty($deliveredMessage)) {
                     continue;
                 }
 
@@ -99,6 +99,7 @@ class Consumer
      * @param Message $message
      * @param bool $requeue
      * @param string|null $error
+     * @throws \Doctrine\DBAL\Exception
      */
     public function reject(Message $message, bool $requeue, ?string $error = null): void
     {
@@ -138,7 +139,7 @@ class Consumer
         /** @var Message $message */
         $message = $strategy->hydrate(array_merge($data, [
             "status" => new Status($data['status']),
-            "priority" => new Priority($data['priority']),
+            "priority" => new Priority((int)$data['priority']),
             "exactTime" => $data['exact_time'],
             "createdAt" => new DateTimeImmutable($data['created_at']),
             "redeliveredAt" => $data['redelivered_at'] ? new DateTimeImmutable($data['redelivered_at']) : null,
