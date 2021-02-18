@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
-$connection = ''; // TODO: need Doctrine\DBAL\Connection
+
+$connection = \Doctrine\DBAL\DriverManager::getConnection([
+    'driver' => 'pdo_sqlite',
+    'path' => '/db/queue.db'
+]);
 
 $producer = new \Simple\Queue\Producer($connection);
 
-//
+
+echo 'Start send to queue' . PHP_EOL;
+
 while (true) {
 
-    $message = (new \Simple\Queue\Message('test', uniqid('', true)))
-        ->setEvent('create_order');
+    $message = new \Simple\Queue\Message('my_queue', uniqid('', true));
 
     $producer->send($message);
 
