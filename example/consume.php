@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
-$connection = ''; // TODO: need Doctrine\DBAL\Connection
+
+$connection = \Doctrine\DBAL\DriverManager::getConnection([
+    'driver' => 'pdo_sqlite',
+    'path' => '/db/queue.db'
+]);
 
 $tableCreator = new \Simple\Queue\QueueTableCreator($connection);
 
