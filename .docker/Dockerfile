@@ -14,10 +14,14 @@ RUN apk update && apk add --no-cache \
     unzip \
     openssh \
     libzip-dev \
+    sqlite \
+    sqlite-dev \
     shadow
 
 RUN docker-php-ext-install \
-        mysqli
+        pdo_sqlite
+
+RUN mkdir /db && chown -R ${USER_ID}:${GROUP_ID} /db && /usr/bin/sqlite3 /db/queue.db
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
