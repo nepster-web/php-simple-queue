@@ -42,7 +42,7 @@ class Message
      *
      * @var string|null
      */
-    private ?string $event = null;
+    private ?string $event;
 
     /**
      * Message data
@@ -72,7 +72,7 @@ class Message
      *
      * @var string|null
      */
-    private ?string $error = null;
+    private ?string $error;
 
     /**
      * @var int
@@ -87,7 +87,7 @@ class Message
     /**
      * @var DateTimeImmutable|null
      */
-    private ?DateTimeImmutable $redeliveredAt = null;
+    private ?DateTimeImmutable $redeliveredAt;
 
     /**
      * Message constructor.
@@ -102,6 +102,7 @@ class Message
         $this->priority = new Priority(Priority::DEFAULT);
         $this->attempts = 0;
         $this->error = null;
+        $this->event = null;
         $this->exactTime = time();
         $this->createdAt = new DateTimeImmutable('now');
         $this->redeliveredAt = null;
@@ -168,9 +169,9 @@ class Message
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEvent(): string
+    public function getEvent(): ?string
     {
         return $this->event;
     }
