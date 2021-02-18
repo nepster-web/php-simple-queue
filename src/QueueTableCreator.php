@@ -65,7 +65,7 @@ class QueueTableCreator
         $table->addColumn('status', Types::STRING);
         $table->addColumn('attempts', Types::SMALLINT);
         $table->addColumn('queue', Types::STRING);
-        $table->addColumn('event', Types::STRING);
+        $table->addColumn('event', Types::STRING, ['notnull' => false]);
         $table->addColumn('body', Types::TEXT, ['notnull' => false]);
         $table->addColumn('priority', Types::SMALLINT, ['notnull' => false]);
         $table->addColumn('error', Types::TEXT, ['notnull' => false]);
