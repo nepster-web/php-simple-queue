@@ -5,22 +5,21 @@ Demonstration of work PHP Simple Queue using SQLite.
 
 
 ## :book: Guide
----------------
 
 * [Install](./install.md)
 * [Usage basics](./usage.md)
 * **[Example](./example.md)**
 * [Cookbook](./cookbook.md)
 
+
 ## :page_facing_up: Example
----------------------------
 
 Example of sending messages to a queue: [produce.php](../../example/produce.php)
+
 Example of processing messages from a queue: [consume.php](../../example/consume.php)
 
 
 ## Quick run with docker
-------------------------
 
 `cd .docker` - go to dir.
 
@@ -35,5 +34,5 @@ Example of processing messages from a queue: [consume.php](../../example/consume
 
 **Also, you can access to:**
 
-- `make php cmd='-v''`:
+- `make php cmd='-v'`:
 - `make composer cmd='update'`:

@@ -8,7 +8,6 @@ It supports queues based on **DB**.
 
 
 ## :book: Guide
----------------
 
 * [Install](./install.md)
 * [Usage basics](./usage.md)
