@@ -1,7 +1,7 @@
 PHP Simple Queue Cookbook
 =========================
 
------
+Tips, recommendations and best practices for use this library.
 
 
 ## :book: Guide

@@ -1,7 +1,7 @@
 PHP Simple Queue Usage basics
 =============================
 
------
+An example of using this library.
 
 
 ## :book: Guide
@@ -13,3 +13,4 @@ PHP Simple Queue Usage basics
 
 
 ## :page_facing_up: Usage basics
+
