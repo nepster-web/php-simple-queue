@@ -17,11 +17,14 @@ Beta under development
 
 Alpha under development
 -------------------
+- *ENH*: Add simple example with consume and produce
+- *ENH*: Ability to run example with docker
 
 
 
 Release February 15, 2021
 -------------------------
- - *ENH*: add simple example with consume and produce
- - *ENH*: ability to run example with docker
- - Initial release.
+- Create guide
+- Create example
+- Create tests
+- Initial release.

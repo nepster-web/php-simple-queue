@@ -28,6 +28,8 @@ or add
 "nepster-web/simple-queue": "*"
 ```
 
+
+
 > TIP:  When install this package, specify the exact version. For example: `"nepster-web/simple-queue": "0.0.1"`
 
 If you specify the exact version of this library it is possible to avoid problems with updating and breaking backward compatibility.

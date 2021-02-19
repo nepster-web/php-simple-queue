@@ -32,6 +32,9 @@ Example of processing messages from a queue: [consume.php](../../example/consume
 - `make php cmd='./example/produce.php'` - run produce (to sent messages to the queue)
 
 
+> Both examples should work in different tabs because they are daemons (while(true){}).
+
+
 **Also, you can access to:**
 
 - `make php cmd='-v'`:

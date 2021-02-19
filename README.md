@@ -38,6 +38,23 @@ or add
 :computer: Basic Usage
 ----------------------
 
+### Send to queue (producing)
+
+```
+$message = new Message('my_queue', json_decode($data));
+$producer->send($message);
+```
+
+### Read from queue (consuming)
+
+```
+while (true) {
+    if ($message = $consumer->fetchMessage('my_queue')) {
+        // Your message handling logic
+        $consumer->acknowledge($message);
+    }
+}
+```
 
 
 ### Testing
