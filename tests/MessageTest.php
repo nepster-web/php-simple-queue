@@ -69,6 +69,14 @@ class MessageTest extends TestCase
         self::assertEquals(Priority::HIGH, $message->getPriority());
     }
 
+    public function testChangeQueue(): void
+    {
+        $message = new Message('my_queue', '');
+        $message->changeQueue('new_queue');
+
+        self::assertEquals('new_queue', $message->getQueue());
+    }
+
     public function testSetEvent(): void
     {
         $message = new Message('my_queue', '');

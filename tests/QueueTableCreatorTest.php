@@ -8,7 +8,8 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\QueueTableCreator;
-use Simple\QueueTest\Helper\FakeConnectionTrait;
+use Simple\QueueTest\Helper\MockConnection;
+use Simple\QueueTest\Helper\MockSchemaManager;
 
 /**
  * Class QueueTableCreatorTest
@@ -16,8 +17,6 @@ use Simple\QueueTest\Helper\FakeConnectionTrait;
  */
 class QueueTableCreatorTest extends TestCase
 {
-    use FakeConnectionTrait;
-
     public function testChangeTableName(): void
     {
         QueueTableCreator::changeTableName('my_table');
@@ -29,12 +28,20 @@ class QueueTableCreatorTest extends TestCase
     {
         $data = [];
 
-        $queueTableCreator = new QueueTableCreator($this->getFakeConnection($data));
+        $schemaManager = new class extends MockSchemaManager {
+            public function createTable(Table $table): void
+            {
+                self::$data['createTable'] = $table;
+            }
+        };
+        $connection = new MockConnection($schemaManager);
+
+        $queueTableCreator = new QueueTableCreator($connection);
 
         $queueTableCreator->createDataBaseTable();
 
         /** @var Table $table */
-        $table = $data['createTable'];
+        $table = $schemaManager::$data['createTable'];
 
         $tableColumns = [];
 
