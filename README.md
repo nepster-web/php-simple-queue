@@ -41,6 +41,10 @@ or add
 ### Send to queue (producing)
 
 ```php
+// $connection - doctrine connection
+
+$producer = new \Simple\Queue\Producer($connection);
+
 $message = new Message('my_queue', json_decode($data));
 $producer->send($message);
 ```
@@ -48,6 +52,11 @@ $producer->send($message);
 ### Read from queue (consuming)
 
 ```php
+// $connection - doctrine connection
+
+$producer = new \Simple\Queue\Producer($connection);
+$consumer = new \Simple\Queue\Consumer($connection, $producer);
+
 while (true) {
     if ($message = $consumer->fetchMessage('my_queue')) {
         // Your message handling logic
