@@ -40,14 +40,14 @@ or add
 
 ### Send to queue (producing)
 
-```
+```php
 $message = new Message('my_queue', json_decode($data));
 $producer->send($message);
 ```
 
 ### Read from queue (consuming)
 
-```
+```php
 while (true) {
     if ($message = $consumer->fetchMessage('my_queue')) {
         // Your message handling logic
