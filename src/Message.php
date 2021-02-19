@@ -224,6 +224,17 @@ class Message
     }
 
     /**
+     * @param string $queue
+     * @return $this
+     */
+    public function changeQueue(string $queue): self
+    {
+        $this->queue = $queue;
+
+        return $this;
+    }
+
+    /**
      * @param Priority $priority
      * @return $this
      */

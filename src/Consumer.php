@@ -98,10 +98,9 @@ class Consumer
     /**
      * @param Message $message
      * @param bool $requeue
-     * @param string|null $error
      * @throws \Doctrine\DBAL\Exception
      */
-    public function reject(Message $message, bool $requeue, ?string $error = null): void
+    public function reject(Message $message, bool $requeue): void
     {
         $this->acknowledge($message);
 
@@ -157,7 +156,7 @@ class Consumer
         $redeliveredMessage = (new Message($message->getQueue(), $message->getBody()))
             ->changePriority(new Priority($message->getPriority()))
             ->setEvent($message->getEvent())
-            ->setRedeliveredAt(new DateTimeImmutable());
+            ->setRedeliveredAt($message->getRedeliveredAt() ?: new DateTimeImmutable());
 
         $hydrator = new ReflectionHydrator();
 
