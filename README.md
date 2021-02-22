@@ -45,7 +45,7 @@ or add
 ### Send to queue (producing)
 
 ```php
-// $connection - doctrine connection
+// $connection - create doctrine connection
 
 $producer = new \Simple\Queue\Producer($connection);
 
@@ -56,18 +56,20 @@ $producer->send($message);
 ### Read from queue (consuming)
 
 ```php
-// $connection - doctrine connection
+// $connection - create doctrine connection
 
 $producer = new \Simple\Queue\Producer($connection);
 $consumer = new \Simple\Queue\Consumer($connection, $producer);
 
 while (true) {
     if ($message = $consumer->fetchMessage('my_queue')) {
-        // Your message handling logic
+        // your message handling logic
         $consumer->acknowledge($message);
     }
 }
 ```
+
+For more details see the [example code](./example) and read the [guide](./docs/guide/example.md).
 
 
 ### Testing
@@ -78,6 +80,14 @@ To run the tests, in the root directory execute below.
 ./vendor/bin/phpunit
 ```
 
+or you can run tests in a docker container
+
+```
+cd .docker
+make build
+make start 
+make test
+```
 
 ---------------------------------
 
