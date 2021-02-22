@@ -114,7 +114,7 @@ class Message
     public function getId(): string
     {
         if ($this->id === null) {
-            throw new LogicException('Message not sent to queue.');
+            throw new LogicException('The message has no id. It looks like it was not sent to the queue.');
         }
 
         return $this->id;
