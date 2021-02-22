@@ -26,7 +26,7 @@ class MessageTest extends TestCase
 
 
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Message not sent to queue.');
+        $this->expectExceptionMessage('The message has no id. It looks like it was not sent to the queue.');
         $message->getId();
 
         self::assertNull($message->getEvent());

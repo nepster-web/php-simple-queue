@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
-use Doctrine\DBAL\Types\Types;
-use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Simple\Queue\Message;
 use Simple\Queue\Producer;
+use Doctrine\DBAL\Types\Types;
+use PHPUnit\Framework\TestCase;
 use Simple\QueueTest\Helper\MockConnection;
 
 /**

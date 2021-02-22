@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
+use Simple\Queue\Status;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Simple\Queue\Status;
 
 /**
  * Class MessageStatusTest

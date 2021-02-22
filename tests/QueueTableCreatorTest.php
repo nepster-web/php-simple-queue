@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
-use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use PHPUnit\Framework\TestCase;
+use Doctrine\DBAL\Schema\Column;
 use Simple\Queue\QueueTableCreator;
 use Simple\QueueTest\Helper\MockConnection;
 use Simple\QueueTest\Helper\MockSchemaManager;
