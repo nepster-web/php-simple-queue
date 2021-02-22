@@ -15,3 +15,19 @@ An example of using this library.
 
 ## :page_facing_up: Usage basics
 
+
+
+### Terms
+
+**Producer** - ...
+
+**Consumer** - ...
+
+**Message** - ...
+
+
+### Simple use case
+
+... // first need set up and run consumer in a separate process
+
+... //

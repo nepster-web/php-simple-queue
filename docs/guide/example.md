@@ -36,7 +36,7 @@ Example of processing messages from a queue: [consume.php](../../example/consume
 > Both examples should work in different tabs because they are daemons (while(true){}).
 
 
-**Also, you can access to:**
+**Also, you can access to php:**
 
 - `make php cmd='-v'`:
 - `make composer cmd='update'`:

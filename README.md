@@ -74,7 +74,7 @@ For more details see the [example code](./example) and read the [guide](./docs/g
 
 ### Testing
 
-To run the tests, in the root directory execute below.
+To run the tests locally, in the root directory execute below
 
 ```
 ./vendor/bin/phpunit
