@@ -6,11 +6,15 @@ It is production ready, battle-tested a simple messaging solution for PHP.
 
 It supports queues based on **DB**.
 
-
 ## :book: Guide
 
+* **[Guide](./README.md)**
 * [Install](./install.md)
 * [Usage basics](./usage.md)
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
-  
+
+
+<br>
+
+[Go back](https://github.com/nepster-web/simple-queue)

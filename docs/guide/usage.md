@@ -6,6 +6,7 @@ An example of using this library.
 
 ## :book: Guide
 
+* [Guide](./README.md)
 * [Install](./install.md)
 * **[Usage basics](./usage.md)**
 * [Example](./example.md)

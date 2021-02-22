@@ -6,6 +6,7 @@ Installation recommendations.
 
 ## :book: Guide
 
+* [Guide](./README.md)
 * **[Install](./install.md)**
 * [Usage basics](./usage.md)
 * [Example](./example.md)

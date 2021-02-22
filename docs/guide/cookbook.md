@@ -6,6 +6,8 @@ Tips, recommendations and best practices for use this library.
 
 ## :book: Guide
 
+* [Guide](./README.md)
+* [Install](https://github.com/nepster-web/simple-queue)
 * [Install](./install.md)
 * [Usage basics](./usage.md)
 * [Example](./example.md)
@@ -16,4 +18,5 @@ Tips, recommendations and best practices for use this library.
 
 - If you are using docker, run consumer in an individual container. This will allow you to get away from blocking handling and speed up the application.
 
-- ...
+- If you are using basic example from [consume.php](../../example/consume.php) you need to watch closely behind leaks in php process. [PHP is meant to die](https://software-gunslinger.tumblr.com/post/47131406821/php-is-meant-to-die).
+
