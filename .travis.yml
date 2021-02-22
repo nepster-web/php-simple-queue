@@ -1,0 +1,22 @@
+language: php
+
+php:
+  - 7.4
+  - 8.0
+
+allow_failures:
+  - php: nightly
+
+before_install:
+  - travis_wait
+
+before_script:
+  - travis_wait travis_retry composer self-update
+  - composer install --prefer-source --no-interaction --dev
+
+script:
+  - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
+  - ./vendor/bin/phpunit
+
+install:
+  - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --no-interaction --prefer-dist
