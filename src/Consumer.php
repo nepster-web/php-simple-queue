@@ -21,10 +21,10 @@ use Laminas\Hydrator\Strategy\HydratorStrategy;
 class Consumer
 {
     /** @var Connection */
-    private Connection $connection;
+    protected Connection $connection;
 
     /** @var Producer */
-    private Producer $producer;
+    protected Producer $producer;
 
     /**
      * Consumer constructor.
@@ -38,6 +38,8 @@ class Consumer
     }
 
     /**
+     * Fetch the next message from the queue
+     *
      * @param string $queue
      * @return Message|null
      */
@@ -79,7 +81,7 @@ class Consumer
 
                 return $this->createMessage($deliveredMessage);
             } catch (Throwable $e) {
-                throw new RuntimeException(sprintf('Error reading queue in consumer: "%s"', $e));
+                throw new RuntimeException(sprintf('Error reading queue in consumer: "%s".', $e));
             }
         }
 
@@ -87,6 +89,8 @@ class Consumer
     }
 
     /**
+     * The message has been successfully processed and will be removed from the queue
+     *
      * @param Message $message
      * @throws \Doctrine\DBAL\Exception
      */
@@ -96,24 +100,28 @@ class Consumer
     }
 
     /**
+     * Reject message with requeue option
+     *
      * @param Message $message
      * @param bool $requeue
      * @throws \Doctrine\DBAL\Exception
      */
-    public function reject(Message $message, bool $requeue): void
+    public function reject(Message $message, bool $requeue = false): void
     {
         $this->acknowledge($message);
 
         if ($requeue) {
-            $this->producer->send($this->redeliveredMessage($message));
+            $this->producer->send($this->forRedeliveryMessage($message));
         }
     }
 
     /**
+     * Remove message from queue
+     *
      * @param string $id
      * @throws \Doctrine\DBAL\Exception
      */
-    private function deleteMessage(string $id): void
+    protected function deleteMessage(string $id): void
     {
         if (empty($id)) {
             throw new LogicException(sprintf('Expected record was removed but it is not. Delivery id: "%s"', $id));
@@ -127,32 +135,15 @@ class Consumer
     }
 
     /**
-     * @param array $data
-     * @return Message
-     * @throws Exception
-     */
-    private function createMessage(array $data): Message
-    {
-        $strategy = new HydratorStrategy(new ReflectionHydrator(), Message::class);
-
-        /** @var Message $message */
-        $message = $strategy->hydrate(array_merge($data, [
-            "status" => new Status($data['status']),
-            "priority" => new Priority((int)$data['priority']),
-            "exactTime" => $data['exact_time'],
-            "createdAt" => new DateTimeImmutable($data['created_at']),
-            "redeliveredAt" => $data['redelivered_at'] ? new DateTimeImmutable($data['redelivered_at']) : null,
-        ]));
-
-        return $message;
-    }
-
-    /**
+     * Redelivered a message to the queue
+     *
      * @param Message $message
      * @return Message
      */
-    private function redeliveredMessage(Message $message): Message
+    protected function forRedeliveryMessage(Message $message): Message
     {
+        // TODO: add the ability to specify the period time
+
         $redeliveredMessage = (new Message($message->getQueue(), $message->getBody()))
             ->changePriority(new Priority($message->getPriority()))
             ->setEvent($message->getEvent())
@@ -166,5 +157,33 @@ class Consumer
         ], $redeliveredMessage);
 
         return $redeliveredMessage;
+    }
+
+    /**
+     * Create entity Message from array data
+     *
+     * @param array $data
+     * @return Message
+     * @throws Exception
+     */
+    protected function createMessage(array $data): Message
+    {
+        $strategy = new HydratorStrategy(new ReflectionHydrator(), Message::class);
+
+        /** @var Message $message */
+        $message = $strategy->hydrate(array_merge($data, [
+            "queue" => $data['queue'] ?? 'default',
+            "event" => $data['event'] ?? null,
+            "body" => $data['body'] ?? '',
+            "error" => $data['error'] ?? null,
+            "attempts" => $data['attempts'] ?? 0,
+            "status" => new Status($data['status'] ?? Status::NEW),
+            "priority" => new Priority((int)($data['priority'] ?? Priority::DEFAULT)),
+            "exactTime" => $data['exact_time'] ?? time(),
+            "createdAt" => new DateTimeImmutable($data['created_at'] ?? 'now'),
+            "redeliveredAt" => isset($data['redelivered_at']) ? new DateTimeImmutable($data['redelivered_at']) : null,
+        ]));
+
+        return $message;
     }
 }
