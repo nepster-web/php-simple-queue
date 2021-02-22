@@ -3,6 +3,12 @@
 </p>
 
 <p align="center">
+[![Latest Stable Version](https://img.shields.io/packagist/v/nepster-web/simple-queue.svg)](https://packagist.org/packages/nepster-web/simple-queue)
+[![Total Downloads](https://img.shields.io/packagist/dt/nepster-web/simple-queue.svg)](https://packagist.org/packages/nepster-web/simple-queue)
+<a href="https://packagist.org/packages/nepster-web/simple-queue"><img src="https://img.shields.io/packagist/l/nepster-web/simple-queue" alt="License"></a>
+</p>
+
+<p align="center">
     <img src="./docs/php-simple-queue-941x320.gif" width="941" alt="Example of work" />
 </p>
 
