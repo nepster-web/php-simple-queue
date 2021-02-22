@@ -1,5 +1,5 @@
 {
-  "name": "nepster-web/simple-queue",
+  "name": "nepster-web/php-simple-queue",
   "description": "Simple queues implementation in PHP through database.",
   "keywords": [
     "php",
@@ -10,9 +10,9 @@
     "consumer"
   ],
   "support": {
-    "docs": "https://github.com/nepster-web/simple-queue/blob/main/docs/guide/README.md",
-    "issues": "https://github.com/nepster-web/simple-queue/issues",
-    "source": "https://github.com/nepster-web/simple-queue"
+    "docs": "https://github.com/nepster-web/php-simple-queue/blob/main/docs/guide/README.md",
+    "issues": "https://github.com/nepster-web/php-simple-queue/issues",
+    "source": "https://github.com/nepster-web/php-simple-queue"
   },
   "config": {
     "sort-packages": true

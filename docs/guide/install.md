@@ -20,17 +20,17 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist nepster-web/simple-queue
+php composer.phar require --prefer-dist nepster-web/php-simple-queue
 ```
 
 or add
 
 ```
-"nepster-web/simple-queue": "*"
+"nepster-web/php-simple-queue": "*"
 ```
 
 
 
-> TIP:  When install this package, specify the exact version. For example: `"nepster-web/simple-queue": "0.0.1"`
+> TIP:  When install this package, specify the exact version. For example: `"nepster-web/php-simple-queue": "0.0.1"`
 
 If you specify the exact version of this library it is possible to avoid problems with updating and breaking backward compatibility.

@@ -35,13 +35,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist nepster-web/simple-queue
+php composer.phar require --prefer-dist nepster-web/php-simple-queue
 ```
 
 or add
 
 ```
-"nepster-web/simple-queue": "*"
+"nepster-web/php-simple-queue": "*"
 ```
 
 
@@ -107,7 +107,7 @@ See [the official guide](./docs/guide/README.md).
 
 * [Documentation](./docs/guide/README.md)
 * [Example](./example)
-* [Issue Tracker](https://github.com/nepster-web/simple-queue/issues)
+* [Issue Tracker](https://github.com/nepster-web/php-simple-queue/issues)
 
 
 ## :newspaper: Changelog
