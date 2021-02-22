@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <img src="./docs/example_of_work.gif" width="800" alt="Example of work" />
+    <img src="./docs/php-simple-queue-941x320.gif" width="941" alt="Example of work" />
 </p>
 
 
