@@ -3,9 +3,9 @@
 </p>
 
 <p align="center">
-    <a href="https://packagist.org/packages/nepster-web/simple-queue"><img src="https://img.shields.io/packagist/v/nepster-web/simple-queue.svg" alt="Release"></a>
-    <a href="https://packagist.org/packages/nepster-web/simple-queue"><img src="https://img.shields.io/packagist/dt/nepster-web/simple-queue.svg" alt="Downloads"></a>
-    <a href="https://packagist.org/packages/nepster-web/simple-queue"><img src="https://img.shields.io/packagist/l/nepster-web/simple-queue" alt="License"></a>
+    <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/v/nepster-web/php-simple-queue.svg" alt="Release"></a>
+    <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/dt/nepster-web/php-simple-queue.svg" alt="Downloads"></a>
+    <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/l/nepster-web/php-simple-queue" alt="License"></a>
 </p>
 
 <p align="center">
