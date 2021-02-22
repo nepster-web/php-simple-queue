@@ -7,7 +7,6 @@ Tips, recommendations and best practices for use this library.
 ## :book: Guide
 
 * [Guide](./README.md)
-* [Install](https://github.com/nepster-web/simple-queue)
 * [Install](./install.md)
 * [Usage basics](./usage.md)
 * [Example](./example.md)
