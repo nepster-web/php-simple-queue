@@ -17,4 +17,4 @@ It supports queues based on **DB**.
 
 <br>
 
-[Go back](https://github.com/nepster-web/simple-queue)
+[Go back](https://github.com/nepster-web/php-simple-queue)

@@ -3,9 +3,9 @@
 </p>
 
 <p align="center">
-    <a href="https://packagist.org/packages/nepster-web/simple-queue"><img src="https://img.shields.io/packagist/v/nepster-web/simple-queue.svg" alt="Release"></a>
-    <a href="https://packagist.org/packages/nepster-web/simple-queue"><img src="https://img.shields.io/packagist/dt/nepster-web/simple-queue.svg" alt="Downloads"></a>
-    <a href="https://packagist.org/packages/nepster-web/simple-queue"><img src="https://img.shields.io/packagist/l/nepster-web/simple-queue" alt="License"></a>
+    <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/v/nepster-web/php-simple-queue.svg" alt="Release"></a>
+    <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/dt/nepster-web/php-simple-queue.svg" alt="Downloads"></a>
+    <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/l/nepster-web/php-simple-queue" alt="License"></a>
 </p>
 
 <p align="center">
@@ -35,13 +35,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist nepster-web/simple-queue
+php composer.phar require --prefer-dist nepster-web/php-simple-queue
 ```
 
 or add
 
 ```
-"nepster-web/simple-queue": "*"
+"nepster-web/php-simple-queue": "*"
 ```
 
 
@@ -107,7 +107,7 @@ See [the official guide](./docs/guide/README.md).
 
 * [Documentation](./docs/guide/README.md)
 * [Example](./example)
-* [Issue Tracker](https://github.com/nepster-web/simple-queue/issues)
+* [Issue Tracker](https://github.com/nepster-web/php-simple-queue/issues)
 
 
 ## :newspaper: Changelog
