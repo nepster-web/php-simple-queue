@@ -27,4 +27,4 @@ Release February 15, 2021
 - Create guide
 - Create example
 - Create tests
-- Initial release.
+- Initial release
