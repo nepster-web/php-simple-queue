@@ -9,11 +9,10 @@ env:
     - XDEBUG_MODE=coverage
 
 before_install:
-  - travis_wait
+  - travis_retry composer self-update && composer --version
 
-before_script:
-  - travis_wait travis_retry composer self-update
-  - composer install --prefer-source --no-interaction --dev
+install:
+  - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --no-interaction --prefer-dist
 
 script:
   - ./vendor/bin/php-cs-fixer fix --verbose --show-progress=dots --dry-run --config=.php_cs.php
@@ -22,6 +21,3 @@ script:
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
-
-install:
-  - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --no-interaction --prefer-dist
