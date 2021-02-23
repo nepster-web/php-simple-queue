@@ -133,11 +133,11 @@ $message->setEvent($event);
 
 Each message has [Status](../../src/Status.php) and [Priority](../../src/Priority.php).
 
-* **Status**
-  Used to delimit messages in a queue (system parameter, not available for public modification).
+* **Status** <br>
+  Used to delimit messages in a queue (system parameter, not available for public modification). <br>
   Possible options: NEW; IN_PROCESS; ERROR; REDELIVERED.
 
 
-* **Priority**
-  Used to sort messages in the consumer.
+* **Priority** <br>
+  Used to sort messages in the consumer. <br>
   Possible options: VERY_LOW = -2; LOW = -1; DEFAULT = 0; HIGH = 1; VERY_HIGH = 2.
