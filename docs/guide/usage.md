@@ -130,3 +130,18 @@ $message->changeQueue($queue);
 $message->changePriority($priority);
 $message->setEvent($event);
 ```
+
+Each message has [Status](../../src/Status.php) and [Priority](../../src/Priority.php).
+
+* **Status**
+
+  Used to delimit messages in a queue (system parameter, not available for public modification).
+
+  Possible options: NEW; IN_PROCESS; ERROR; REDELIVERED.
+
+
+* **Priority**
+  
+  Used to sort messages in the consumer.
+  
+  Possible options: VERY_LOW = -2; LOW = -1; DEFAULT = 0; HIGH = 1; VERY_HIGH = 2.
