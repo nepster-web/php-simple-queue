@@ -19,6 +19,7 @@ filter:
 
 checks:
   php: true
+
 tools:
   php_cs_fixer: true
   external_code_coverage:
