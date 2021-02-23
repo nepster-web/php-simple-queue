@@ -30,7 +30,7 @@ class MockConnection extends Connection
         $this->abstractSchemaManager = $abstractSchemaManager ?: new MockSchemaManager();
 
         $driver = new class extends AbstractSQLiteDriver {
-            public function connect(array $params)
+            public function connect(array $params): void
             {
             }
         };

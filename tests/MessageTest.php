@@ -95,5 +95,4 @@ class MessageTest extends TestCase
         self::assertTrue($message->isRedelivered());
         self::assertEquals($redelivered->format('Y-m-d H:i:s'), $message->getRedeliveredAt()->format('Y-m-d H:i:s'));
     }
-
 }

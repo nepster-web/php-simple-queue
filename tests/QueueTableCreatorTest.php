@@ -66,5 +66,4 @@ class QueueTableCreatorTest extends TestCase
 
         self::assertEquals($expected, $tableColumns);
     }
-
 }

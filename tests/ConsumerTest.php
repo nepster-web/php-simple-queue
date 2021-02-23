@@ -103,6 +103,7 @@ class ConsumerTest extends TestCase
             public function delete($table, array $criteria, array $types = []): int
             {
                 self::$data['delete'] = [$table, $criteria, $types];
+
                 return 1;
             }
         };

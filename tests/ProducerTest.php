@@ -24,6 +24,7 @@ class ProducerTest extends TestCase
             public function insert($table, array $data, array $types = []): int
             {
                 self::$data['insert'] = [$table, $data, $types];
+
                 return 1;
             }
         };
