@@ -17,15 +17,17 @@ An example of using this library.
 
 
 ### Terms
+---------
 
 **Producer** - to send a message to the queue.
 
 **Consumer** - handler, built on top of a transport functionality. The goal of the component is to simply consume messages.
 
-**Message** - data to be processed
+**Message** - data to be processed.
 
 
 ### Simple use case
+-------------------
 
 First you need to configure and run **Consumer**.
 
@@ -79,6 +81,7 @@ Use your imagination to handling your messages.
 
 
 **Example of message sending:**
+-------------------------------
 
 ```php
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
@@ -99,3 +102,4 @@ You can send a message from anywhere in the application to process it in the bac
 
 
 ### Message processing
+----------------------

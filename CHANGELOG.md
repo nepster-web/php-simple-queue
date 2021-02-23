@@ -15,8 +15,8 @@ A changelog of all notable changes made to this library.
 -------------------
 
 
-1.0.0-Alpha under development
--------------------
+1.0.0-Alpha 13.02.2021
+----------------------
 - *ENH*: Repository configuration (travis, scrutinizer, php cs, etc)
 - *ENH*: Add simple example with consume and produce
 - *ENH*: Ability to run example with docker
