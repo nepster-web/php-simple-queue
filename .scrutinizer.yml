@@ -10,18 +10,12 @@ build:
 
 filter:
   excluded_paths:
-    - ".docker/"
-    - "docs/"
-    - "example/"
-    - "tests/"
+    - ".docker/*"
+    - "docs/*"
+    - "example/*"
+    - "tests/*"
   dependency_paths:
     - "vendor/"
 
 checks:
   php: true
-
-tools:
-  php_cs_fixer: true
-  external_code_coverage:
-    runs: 3
-    timeout: 200 # Timeout in seconds.
