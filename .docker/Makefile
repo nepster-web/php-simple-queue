@@ -45,4 +45,4 @@ test: ## run all tests
 	$(app_run) sh -c "/app/vendor/bin/phpunit --colors=always"
 
 test-coverage: ## run test coverage
-	$(eval APP_ENV=testing /app/vendor/bin/phpunit --colors=always --stderr)
+	$(app_run) sh -c "/app/vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover"
