@@ -17,5 +17,8 @@ filter:
   dependency_paths:
     - "vendor/"
 
+tools:
+  external_code_coverage: true
+
 checks:
   php: true
