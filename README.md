@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+    <a href="https://travis-ci.org/nepster-web/php-simple-queue.svg?branch=master"><img src="https://travis-ci.org/nepster-web/php-simple-queue.svg?branch=master" alt="License"></a>
     <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/v/nepster-web/php-simple-queue.svg" alt="Release"></a>
     <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/dt/nepster-web/php-simple-queue.svg" alt="Downloads"></a>
     <a href="https://packagist.org/packages/nepster-web/php-simple-queue"><img src="https://img.shields.io/packagist/l/nepster-web/php-simple-queue" alt="License"></a>
