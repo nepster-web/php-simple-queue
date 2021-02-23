@@ -93,7 +93,7 @@ or you can run tests in a docker container
 cd .docker
 make build
 make start 
-make test
+make comoposer cmd='test'
 ```
 
 ---------------------------------
