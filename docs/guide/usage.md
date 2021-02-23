@@ -25,13 +25,17 @@ An example of using this library.
 
 **Message** - data to be processed.
 
+<br>
 
 ### Simple use case
 -------------------
 
 First you need to configure and run **Consumer**.
 
+<br>
+
 **Simple example for consuming:**
+-------------------------------
 
 ```php
 <?php
@@ -79,6 +83,7 @@ The main idea is to run Consumer in a separate process in the background.
 
 Use your imagination to handling your messages.
 
+<br>
 
 **Example of message sending:**
 -------------------------------
@@ -100,6 +105,8 @@ $producer->send($message);
 
 You can send a message from anywhere in the application to process it in the background. 
 
+<br>
 
-### Message processing
+**Message processing**
 ----------------------
+
