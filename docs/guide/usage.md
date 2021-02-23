@@ -17,12 +17,11 @@ An example of using this library.
 
 Let's define the terms:
 
-**Producer** - to send a message to the queue.
+* **Producer** - to send a message to the queue.
+* **Consumer** - handler, built on top of a transport functionality. The goal of the component is to simply consume messages.
+* **Message** - data to be processed.
 
-**Consumer** - handler, built on top of a transport functionality. The goal of the component is to simply consume messages.
-
-**Message** - data to be processed.
-
+<br>
 
 Next you need to configure and run **Consumer** and then send messages.
 
