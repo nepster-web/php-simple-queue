@@ -23,4 +23,4 @@ tools:
   php_cs_fixer: true
   external_code_coverage:
     runs: 3
-    timeout: 2100 # Timeout in seconds.
+    timeout: 200 # Timeout in seconds.
