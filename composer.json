@@ -25,12 +25,13 @@
     "ext-PDO": "*",
     "ext-json": "*",
     "doctrine/dbal": "^3.0",
-    "ramsey/uuid": "^4.1",
-    "laminas/laminas-hydrator": "^4.1"
+    "laminas/laminas-hydrator": "^4.1",
+    "ramsey/uuid": "^4.1"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "phpunit/phpunit": "^9.5"
+    "phpunit/phpunit": "^9.5",
+    "friendsofphp/php-cs-fixer": "^2.18"
   },
   "autoload": {
     "psr-4": {
@@ -41,5 +42,10 @@
     "psr-4": {
       "Simple\\QueueTest\\": "tests/"
     }
+  },
+  "scripts": {
+    "code-style-check": "php vendor/bin/php-cs-fixer fix --verbose --show-progress=dots --dry-run --config=.php_cs.php",
+    "code-style-fix": "php vendor/bin/php-cs-fixer fix --diff --config=.php_cs.php",
+    "test": "php vendor/bin/phpunit --colors=always"
   }
 }
