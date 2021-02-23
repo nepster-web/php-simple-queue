@@ -1,4 +1,7 @@
 build:
+  tests:
+    override:
+      - true
   nodes:
     analysis:
       tests:

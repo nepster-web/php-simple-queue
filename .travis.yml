@@ -4,6 +4,10 @@ php:
   - 7.4
   - 8.0
 
+env:
+  global:
+    - XDEBUG_MODE=coverage
+
 allow_failures:
   - php: nightly
 
