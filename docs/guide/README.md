@@ -12,6 +12,7 @@ It supports queues based on **DB**.
 * [Install](./install.md)
 * [Usage basics](./usage.md)
 * [Example](./example.md)
+* [Run consume](./run-consume.md)
 * [Cookbook](./cookbook.md)
 
 
