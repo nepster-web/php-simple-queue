@@ -10,6 +10,7 @@ Demonstration of work PHP Simple Queue using SQLite.
 * [Install](./install.md)
 * [Usage basics](./usage.md)
 * **[Example](./example.md)**
+* [Run consume](./run-consume.md)
 * [Cookbook](./cookbook.md)
 
 

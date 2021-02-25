@@ -10,6 +10,7 @@ An example of using this library.
 * [Install](./install.md)
 * **[Usage basics](./usage.md)**
 * [Example](./example.md)
+* [Run consume](./run-consume.md)
 * [Cookbook](./cookbook.md)
 
 
