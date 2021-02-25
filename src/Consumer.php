@@ -89,33 +89,6 @@ class Consumer
     }
 
     /**
-     * The message has been successfully processed and will be removed from the queue
-     *
-     * @param Message $message
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function acknowledge(Message $message): void
-    {
-        $this->deleteMessage($message->getId());
-    }
-
-    /**
-     * Reject message with requeue option
-     *
-     * @param Message $message
-     * @param bool $requeue
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function reject(Message $message, bool $requeue = false): void
-    {
-        $this->acknowledge($message);
-
-        if ($requeue) {
-            $this->producer->send($this->forRedeliveryMessage($message));
-        }
-    }
-
-    /**
      * Remove message from queue
      *
      * @param string $id
@@ -186,4 +159,98 @@ class Consumer
 
         return $message;
     }
+
+
+
+
+
+
+
+
+    /**
+     * The message has been successfully processed and will be removed from the queue
+     *
+     * @param Message $message
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function acknowledge(Message $message): void
+    {
+        $this->deleteMessage($message->getId());
+    }
+
+    /**
+     * Reject message with requeue option
+     *
+     * @param Message $message
+     * @param bool $requeue
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function reject(Message $message, bool $requeue = false): void
+    {
+        $this->acknowledge($message);
+
+        if ($requeue) {
+            $this->producer->send($this->forRedeliveryMessage($message));
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function bind(string $queue, callable $processor): void
+    {
+
+    }
+
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    public function consume(): void
+    {
+        (new QueueTableCreator($this->connection))->createDataBaseTable();
+
+        // TODO: check jobs
+        // TODO: check process
+        // TODO: logic with
+
+        while (true) {
+            //
+            if ($message = $this->fetchMessage('my_queue')) {
+
+                try {
+
+                    // TODO: find need processor or job
+                    // TODO: run process
+
+                    $this->acknowledge($message);
+
+                } catch (Throwable $throwable) {
+
+                   // $message->setRedeliveredAt(); redelivered after 5min
+
+                    try {
+                        $this->reject($message, true);
+                    } catch (RuntimeException|\Doctrine\DBAL\Exception $exception) {
+                        // maybe lucky later
+                    }
+                }
+
+            }
+        }
+
+    }
+
 }

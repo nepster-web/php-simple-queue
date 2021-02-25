@@ -9,6 +9,7 @@ use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
+use InvalidArgumentException;
 
 /**
  * Class Producer
@@ -31,6 +32,41 @@ class Producer
     }
 
     /**
+     * @param string $queue
+     * @param $body
+     * @return Message
+     */
+    public function createMessage(string $queue, $body): Message
+    {
+        if (is_callable($body)) {
+            throw new InvalidArgumentException('The closure cannot be serialized.');
+        }
+
+        if (is_object($body) && method_exists($body, '__toString')) {
+            $body = (string)$body;
+        }
+
+        if (is_object($body) || is_array(is_object($body))) {
+            // TODO: need to serialize $body
+        }
+
+        return new Message($queue, (string)$body);
+    }
+
+    /**
+     * @param string $jobName
+     * @param array $data
+     */
+    public function dispatch(string $jobName, array $data): void
+    {
+        // TODO: need to serialize $data
+
+        // TODO: check jobs
+
+        // TODO: send message with job info
+    }
+
+    /**
      * @param Message $message
      */
     public function send(Message $message): void
@@ -50,6 +86,7 @@ class Producer
         ];
 
         try {
+
             $rowsAffected = $this->connection->insert(QueueTableCreator::getTableName(), $dataMessage, [
                 'id' => Types::GUID,
                 'status' => Types::STRING,
@@ -67,6 +104,7 @@ class Producer
             if ($rowsAffected !== 1) {
                 throw new RuntimeException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
             }
+
         } catch (Throwable $e) {
             throw new RuntimeException('The transport fails to send the message due to some internal error.', 0, $e);
         }
