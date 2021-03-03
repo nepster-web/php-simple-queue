@@ -56,7 +56,7 @@ echo 'Start consuming' . PHP_EOL;
 
 while (true) {
 
-    if ($message = $consumer->fetchMessage('my_queue')) {
+    if ($message = $consumer->fetchMessage(['my_queue'])) {
 
         // Your message handling logic
 
