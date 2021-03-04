@@ -26,12 +26,17 @@ class Status
     /**
      * Set for a message for which an error occurred
      */
-    public const ERROR = 'ERROR';
+    public const FAILURE = 'FAILURE';
 
     /**
      * Set for a message to be redelivered to the queue
      */
     public const REDELIVERED = 'REDELIVERED';
+
+    /**
+     * Set for a message if there is no processor or job
+     */
+    public const UNDEFINED_HANDLER = 'UNDEFINED_HANDLER';
 
     /** @var string */
     private string $status;
@@ -73,7 +78,7 @@ class Status
         return [
             self::NEW,
             self::IN_PROCESS,
-            self::ERROR,
+            self::FAILURE,
             self::REDELIVERED,
         ];
     }
