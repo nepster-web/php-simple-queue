@@ -4,7 +4,7 @@ USER_ID = $(shell id -u)
 GROUP_ID=$(shell id -g)
 APP_DIR="${PWD}/.."
 
-app_run := docker exec -t --user="${USER_ID}" $(PROJECT_NAME)
+app_run := docker exec -it --user="${USER_ID}" $(PROJECT_NAME)
 
 .PHONY : help build start stop restart composer php test test-coverage
 
