@@ -8,8 +8,8 @@ use Throwable;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Types;
 use InvalidArgumentException;
+use Doctrine\DBAL\Types\Types;
 
 /**
  * Class Producer
@@ -17,18 +17,21 @@ use InvalidArgumentException;
  */
 class Producer
 {
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     private Connection $connection;
+
+    /** @var Config|null */
+    private ?Config $config;
 
     /**
      * Producer constructor.
      * @param Connection $connection
+     * @param Config|null $config
      */
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, ?Config $config = null)
     {
         $this->connection = $connection;
+        $this->config = $config ?: Config::getDefault();
     }
 
     /**
@@ -46,8 +49,8 @@ class Producer
             $body = (string)$body;
         }
 
-        if (is_object($body) || is_array(is_object($body))) {
-            // TODO: need to serialize $body
+        if (is_object($body) || is_array($body)) {
+            $body = $this->config->getSerializer()->serialize($body);
         }
 
         return new Message($queue, (string)$body);
@@ -59,11 +62,24 @@ class Producer
      */
     public function dispatch(string $jobName, array $data): void
     {
-        // TODO: need to serialize $data
+        if ($this->config->hasJob($jobName) && (class_exists($this->config->getJob($jobName)) === false)) {
+            throw new InvalidArgumentException(sprintf('A non-existent class "%s" is declared in the config.', $jobName));
+        }
 
-        // TODO: check jobs
+        if (($this->config->hasJob($jobName) === false) && (class_exists($jobName) === false)) {
+            throw new InvalidArgumentException(sprintf('Job class "%s" doesn\'t exist.', $jobName));
+        }
 
-        // TODO: send message with job info
+        if (class_exists($jobName) && (is_a($jobName, Job::class) === false)) {
+            throw new InvalidArgumentException(sprintf('Job class "%s" doesn\'t extends "%s".', $jobName, Job::class));
+        }
+
+        $message = $this->createMessage('default', $data); // TODO: change default queue
+        $message->setEvent($jobName);
+
+        $message = (new MessageHydrator($message))->jobable()->getMessage();
+
+        $this->send($message);
     }
 
     /**
@@ -79,6 +95,7 @@ class Producer
             'attempts' => $message->getAttempts(),
             'queue' => $message->getQueue(),
             'event' => $message->getEvent(),
+            'is_job' => $message->isJob(),
             'body' => $message->getBody(),
             'priority' => $message->getPriority(),
             'error' => $message->getError(),
@@ -86,7 +103,6 @@ class Producer
         ];
 
         try {
-
             $rowsAffected = $this->connection->insert(QueueTableCreator::getTableName(), $dataMessage, [
                 'id' => Types::GUID,
                 'status' => Types::STRING,
@@ -95,6 +111,7 @@ class Producer
                 'attempts' => Types::SMALLINT,
                 'queue' => Types::STRING,
                 'event' => Types::STRING,
+                'is_job' => Types::BOOLEAN,
                 'body' => Types::TEXT,
                 'priority' => Types::SMALLINT,
                 'error' => Types::TEXT,
@@ -104,7 +121,6 @@ class Producer
             if ($rowsAffected !== 1) {
                 throw new RuntimeException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
             }
-
         } catch (Throwable $e) {
             throw new RuntimeException('The transport fails to send the message due to some internal error.', 0, $e);
         }
