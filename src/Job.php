@@ -18,8 +18,14 @@ abstract class Job
     abstract public function handle(Message $message, Producer $producer): string;
 
     /** @return string */
-    public function getQueue(): string
+    public function queue(): string
     {
-        return Consumer::ACK;
+        return 'default';
+    }
+
+    /** @return int|null */
+    public function attempts(): ?int
+    {
+        return null;
     }
 }
