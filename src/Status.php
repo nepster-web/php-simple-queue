@@ -80,6 +80,7 @@ class Status
             self::IN_PROCESS,
             self::FAILURE,
             self::REDELIVERED,
+            self::UNDEFINED_HANDLER,
         ];
     }
 }
