@@ -70,7 +70,7 @@ $producer = new \Simple\Queue\Producer($connection);
 $consumer = new \Simple\Queue\Consumer($connection, $producer);
 
 while (true) {
-    if ($message = $consumer->fetchMessage('my_queue')) {
+    if ($message = $consumer->fetchMessage(['my_queue'])) {
         // your message handling logic
         $consumer->acknowledge($message);
     }
