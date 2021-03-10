@@ -120,7 +120,7 @@ class Config
      */
     public function registerJobAlias(string $alias, string $class): self
     {
-        if (preg_match('/^[0-1a-zA-Z-._]$/mu', $alias) === false) {
+        if ((bool)preg_match('/^[a-zA-Z0-9_.-]*$/u', $alias) === false) {
             throw new InvalidArgumentException(sprintf('The job alias "%s" contains invalid characters.', $alias));
         }
 
@@ -148,5 +148,7 @@ class Config
     public function withSerializer(SerializerInterface $serializer): self
     {
         $this->serializer = $serializer;
+
+        return $this;
     }
 }
