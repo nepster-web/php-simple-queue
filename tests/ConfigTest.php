@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
-use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Simple\Queue\Config;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use Simple\Queue\Serializer\SerializerInterface;
 
 /**

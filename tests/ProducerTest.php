@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
-use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
-use Simple\Queue\Config;
-use Simple\Queue\Consumer;
 use Simple\Queue\Job;
+use Simple\Queue\Config;
 use Simple\Queue\Message;
+use Simple\Queue\Consumer;
 use Simple\Queue\Producer;
+use InvalidArgumentException;
 use Doctrine\DBAL\Types\Types;
 use PHPUnit\Framework\TestCase;
 use Simple\QueueTest\Helper\MockConnection;
@@ -113,8 +113,7 @@ class ProducerTest extends TestCase
             }
         };
 
-        $job = new class() extends Job
-        {
+        $job = new class() extends Job {
             public function handle(Message $message, Producer $producer): string
             {
                 return Consumer::ACK;
@@ -165,7 +164,8 @@ class ProducerTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The closure cannot be serialized.');
 
-        (new Producer($connection))->createMessage('my_queue', static function (){});
+        (new Producer($connection))->createMessage('my_queue', static function (): void {
+        });
     }
 
     public function testFailureSendMessage(): void

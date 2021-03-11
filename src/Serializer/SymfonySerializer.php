@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Simple\Queue\Serializer;
 
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 /**
  * Class SymfonySerializer
