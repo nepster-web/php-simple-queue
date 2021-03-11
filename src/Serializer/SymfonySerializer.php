@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simple\Queue\Serializer;
 
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -20,7 +21,7 @@ class SymfonySerializer implements SerializerInterface
      */
     public function __construct()
     {
-        $this->serializer = new Serializer();
+        $this->serializer = new Serializer([], [new JsonEncoder()]);
     }
 
     /**
@@ -28,7 +29,7 @@ class SymfonySerializer implements SerializerInterface
      */
     public function serialize($data): string
     {
-        return $this->serializer->serialize($data, 'json');
+        return $this->serializer->serialize($data, JsonEncoder::FORMAT);
     }
 
     /**
@@ -37,6 +38,6 @@ class SymfonySerializer implements SerializerInterface
     public function deserialize(string $data)
     {
         // TODO
-        return $this->serializer->deserialize($data, '', 'json');
+        return $this->serializer->deserialize($data, '', JsonEncoder::FORMAT);
     }
 }
