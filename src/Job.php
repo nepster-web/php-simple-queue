@@ -17,13 +17,17 @@ abstract class Job
      */
     abstract public function handle(Message $message, Producer $producer): string;
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function queue(): string
     {
         return 'default';
     }
 
-    /** @return int|null */
+    /**
+     * @return int|null
+     */
     public function attempts(): ?int
     {
         return null;

@@ -6,7 +6,7 @@ namespace Simple\Queue;
 
 use RuntimeException;
 use InvalidArgumentException;
-use Simple\Queue\Serializer\SymfonySerializer;
+use Simple\Queue\Serializer\BaseSerializer;
 use Simple\Queue\Serializer\SerializerInterface;
 
 /**
@@ -15,7 +15,7 @@ use Simple\Queue\Serializer\SerializerInterface;
  */
 class Config
 {
-    /** @var int in seconds */
+    /** @var int */
     private int $redeliveryTimeInSeconds = 180;
 
     /** @var int */
@@ -33,8 +33,16 @@ class Config
     public function __construct()
     {
         if ($this->serializer === null) {
-            $this->serializer = new SymfonySerializer();
+            $this->serializer = new BaseSerializer();
         }
+    }
+
+    /**
+     * @return static
+     */
+    public static function getDefault(): self
+    {
+        return new self;
     }
 
     /**
@@ -84,14 +92,6 @@ class Config
     }
 
     /**
-     * @return static
-     */
-    public static function getDefault(): self
-    {
-        return new self;
-    }
-
-    /**
      * @param int $seconds
      * @return $this
      */
@@ -127,6 +127,8 @@ class Config
         if (isset($this->jobs[$alias])) {
             throw new RuntimeException(sprintf('Job "%s" is already registered in the jobs.', $alias));
         }
+
+        // TODO: job class
 
         $this->jobs[$alias] = $class;
 

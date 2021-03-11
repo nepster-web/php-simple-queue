@@ -55,7 +55,9 @@ class QueueTableCreator
     {
         $schemaManager = $this->connection->getSchemaManager();
 
-        if ($schemaManager ? $schemaManager->tablesExist([self::getTableName()]) : false) {
+        $tableExists = $schemaManager ? $schemaManager->tablesExist([self::getTableName()]) : false;
+
+        if ($schemaManager === null || $tableExists === true) {
             return;
         }
 

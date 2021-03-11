@@ -103,6 +103,7 @@ class Producer
         ];
 
         try {
+
             $rowsAffected = $this->connection->insert(QueueTableCreator::getTableName(), $dataMessage, [
                 'id' => Types::GUID,
                 'status' => Types::STRING,
@@ -121,8 +122,11 @@ class Producer
             if ($rowsAffected !== 1) {
                 throw new RuntimeException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
             }
+
         } catch (Throwable $e) {
+
             throw new RuntimeException('The transport fails to send the message due to some internal error.', 0, $e);
+
         }
     }
 }

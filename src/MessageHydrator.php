@@ -24,7 +24,7 @@ class MessageHydrator
      */
     public function __construct(Message $message)
     {
-        $this->message = $message;
+        $this->message = clone $message;
     }
 
     /**
@@ -59,10 +59,10 @@ class MessageHydrator
     }
 
     /**
-     * @param string $error
+     * @param string|null $error
      * @return $this
      */
-    public function setError(string $error): self
+    public function setError(?string $error): self
     {
         $this->message = $this->hydrate(['error' => $error]);
 
@@ -112,17 +112,17 @@ class MessageHydrator
 
         /** @var Message $message */
         $message = $strategy->hydrate(array_merge($data, [
-            "queue" => $data['queue'] ?? 'default',
-            "event" => $data['event'] ?? null,
-            "isJob" => $data['is_job'] ?? false,
-            "body" => $data['body'] ?? '',
-            "error" => $data['error'] ?? null,
-            "attempts" => $data['attempts'] ?? 0,
-            "status" => new Status($data['status'] ?? Status::NEW),
-            "priority" => new Priority((int)($data['priority'] ?? Priority::DEFAULT)),
-            "exactTime" => $data['exact_time'] ?? time(),
-            "createdAt" => new DateTimeImmutable($data['created_at'] ?? 'now'),
-            "redeliveredAt" => isset($data['redelivered_at']) ? new DateTimeImmutable($data['redelivered_at']) : null,
+            'queue' => $data['queue'] ?? 'default',
+            'event' => $data['event'] ?? null,
+            'isJob' => $data['is_job'] ?? false,
+            'body' => $data['body'] ?? '',
+            'error' => $data['error'] ?? null,
+            'attempts' => $data['attempts'] ?? 0,
+            'status' => new Status($data['status'] ?? Status::NEW),
+            'priority' => new Priority((int)($data['priority'] ?? Priority::DEFAULT)),
+            'exactTime' => $data['exact_time'] ?? time(),
+            'createdAt' => new DateTimeImmutable($data['created_at'] ?? 'now'),
+            'redeliveredAt' => isset($data['redelivered_at']) ? new DateTimeImmutable($data['redelivered_at']) : null,
         ]));
 
         return $message;
