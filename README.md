@@ -61,7 +61,7 @@ $message = new Message('my_queue', json_decode($data));
 $producer->send($message);
 ```
 
-### Read from queue (consuming)
+### Processing messages from queue (consuming)
 
 ```php
 // $connection - create doctrine connection
@@ -69,12 +69,26 @@ $producer->send($message);
 $producer = new \Simple\Queue\Producer($connection);
 $consumer = new \Simple\Queue\Consumer($connection, $producer);
 
-while (true) {
-    if ($message = $consumer->fetchMessage(['my_queue'])) {
-        // your message handling logic
-        $consumer->acknowledge($message);
-    }
-}
+// process all messages from queue
+$consumer->bind('my_queue', static function(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string {
+
+    // Your message handling logic
+    var_dump($message->getBody() . PHP_EOL);
+
+    return \Simple\Queue\Consumer::ACK;
+});
+
+$consumer->consume();
+```
+
+### Work with messages through jobs (producing)
+
+```php
+// $connection - create doctrine connection
+
+$producer = new \Simple\Queue\Producer($connection);
+
+$producer->dispatch(MyJob::class, ['key' => 'value']);
 ```
 
 For more details see the [example code](./example) and read the [guide](./docs/guide/example.md).
@@ -98,7 +112,6 @@ make comoposer cmd='test'
 ```
 
 ---------------------------------
-
 
 ## :book: Documentation
 
