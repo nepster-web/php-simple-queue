@@ -56,6 +56,7 @@ class QueueTableCreatorTest extends TestCase
             'attempts' => 'smallint',
             'queue' => 'string',
             'event' => 'string',
+            'is_job' => 'boolean',
             'body' => 'text',
             'priority' => 'smallint',
             'error' => 'text',
