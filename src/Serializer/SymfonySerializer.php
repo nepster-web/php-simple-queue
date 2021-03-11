@@ -21,7 +21,13 @@ class SymfonySerializer implements SerializerInterface
      */
     public function __construct()
     {
-        $this->serializer = new Serializer([], [new JsonEncoder()]);
+        $this->serializer = new Serializer(
+            [
+
+            ], [
+                new JsonEncoder(),
+            ]
+        );
     }
 
     /**
@@ -29,7 +35,7 @@ class SymfonySerializer implements SerializerInterface
      */
     public function serialize($data): string
     {
-        return $this->serializer->serialize($data, JsonEncoder::FORMAT);
+        return $this->serializer->encode($data, JsonEncoder::FORMAT);
     }
 
     /**
@@ -37,7 +43,6 @@ class SymfonySerializer implements SerializerInterface
      */
     public function deserialize(string $data)
     {
-        // TODO
-        return $this->serializer->deserialize($data, '', JsonEncoder::FORMAT);
+        return $this->serializer->decode($data, JsonEncoder::FORMAT);
     }
 }
