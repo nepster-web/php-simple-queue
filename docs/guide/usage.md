@@ -9,6 +9,7 @@ An example of using this library.
 * [Guide](./README.md)
 * [Install](./install.md)
 * **[Usage basics](./usage.md)**
+* [Consuming](./consuming.md)
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
 
@@ -27,56 +28,6 @@ Next you need to configure and run **Consumer** and then send messages.
 
 <br>
 
-**Simple example for consuming:**
--------------------------------
-
-```php
-<?php
-
-declare(strict_types=1);
-
-include __DIR__ . '/../vendor/autoload.php';
-
-
-$connection = \Doctrine\DBAL\DriverManager::getConnection([
-    'driver' => 'pdo_sqlite',
-    'path' => '/db/queue.db'
-]);
-
-$tableCreator = new \Simple\Queue\QueueTableCreator($connection);
-
-$producer = new \Simple\Queue\Producer($connection);
-$consumer = new \Simple\Queue\Consumer($connection, $producer);
-
-// create table for queue messages
-$tableCreator->createDataBaseTable();
-
-
-echo 'Start consuming' . PHP_EOL;
-
-while (true) {
-
-    if ($message = $consumer->fetchMessage(['my_queue'])) {
-
-        // Your message handling logic
-
-        $consumer->acknowledge($message);
-
-        echo sprintf('Received message: %s ', $message->getBody());
-        echo PHP_EOL;
-    }
-
-}
-```
-
-You can use a simple php cli, [Symfony/Console](https://symfony.com/doc/current/components/console.html)
-or any other component, it really doesn't matter.
-The main idea is to run Consumer in a separate process in the background.
-
-
-Use your imagination to handling your messages.
-
-<br>
 
 **Example of message sending:**
 -------------------------------
@@ -100,7 +51,27 @@ You can send a message from anywhere in the application to process it in the bac
 
 <br>
 
-**Message processing**
+**Config:**
+-------------------------------
+
+```php
+ // 
+```
+
+
+<br>
+
+
+**Example of message sending through job:**
+-------------------------------
+
+```php
+ //
+```
+
+<br>
+
+**Message**
 ----------------------
 
 Description of the base entity [Message](../../src/Message.php)
