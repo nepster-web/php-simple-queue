@@ -8,6 +8,7 @@ use RuntimeException;
 use Simple\Queue\Config;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Simple\Queue\Serializer\BaseSerializer;
 use Simple\Queue\Serializer\SerializerInterface;
 
 /**
@@ -48,5 +49,48 @@ class ConfigTest extends TestCase
         (new Config())
             ->registerJobAlias('test', 'TestJob')
             ->registerJobAlias('test', 'TestJob');
+    }
+
+    public function testDefaultInstance(): void
+    {
+        $config = new Config();
+
+        self::assertEquals($config, Config::getDefault());
+    }
+
+    public function testDefaultRedeliveryTimeInSeconds(): void
+    {
+        self::assertEquals(180, Config::getDefault()->getRedeliveryTimeInSeconds());
+    }
+
+    public function testDefaultNumberOfAttemptsBeforeFailure(): void
+    {
+        self::assertEquals(5, Config::getDefault()->getNumberOfAttemptsBeforeFailure());
+    }
+
+    public function testDefaultGetJobs(): void
+    {
+        self::assertEquals([], Config::getDefault()->getJobs());
+    }
+
+    public function testDefaultSerializer(): void
+    {
+        self::assertInstanceOf(BaseSerializer::class, Config::getDefault()->getSerializer());
+    }
+
+    public function testGetNotExistsJob(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Job "%s" doesn\'t exists.', 'not-exists'));
+
+        Config::getDefault()->getJob('not-exists');
+    }
+
+    public function testHasJob(): void
+    {
+        $config = Config::getDefault()->registerJobAlias('exists', \stdClass::class);
+
+        self::asserttrue($config->hasJob('exists'));
+        self::assertFalse(Config::getDefault()->hasJob('not-exists'));
     }
 }

@@ -6,6 +6,7 @@ namespace Simple\QueueTest;
 
 use LogicException;
 use DateTimeImmutable;
+use Simple\Queue\MessageHydrator;
 use Simple\Queue\Status;
 use Simple\Queue\Message;
 use Simple\Queue\Priority;
@@ -94,5 +95,16 @@ class MessageTest extends TestCase
 
         self::assertTrue($message->isRedelivered());
         self::assertEquals($redelivered->format('Y-m-d H:i:s'), $message->getRedeliveredAt()->format('Y-m-d H:i:s'));
+    }
+
+    public function testRedeliveredAtByStatus(): void
+    {
+        $message = new Message('my_queue', '');
+
+        $message = (new MessageHydrator($message))
+            ->changeStatus(Status::REDELIVERED)
+            ->getMessage();
+
+        self::assertTrue($message->isRedelivered());
     }
 }

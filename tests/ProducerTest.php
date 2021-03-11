@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Simple\Queue\Job;
@@ -15,6 +16,7 @@ use InvalidArgumentException;
 use Doctrine\DBAL\Types\Types;
 use PHPUnit\Framework\TestCase;
 use Simple\QueueTest\Helper\MockConnection;
+use stdClass;
 
 /**
  * Class ProducerTest
@@ -24,14 +26,7 @@ class ProducerTest extends TestCase
 {
     public function testSuccessSendMessage(): void
     {
-        $connection = new class extends MockConnection {
-            public function insert($table, array $data, array $types = []): int
-            {
-                self::$data['insert'] = [$table, $data, $types];
-
-                return 1;
-            }
-        };
+        $connection = $this->getMockConnectionWithInsert(1);
 
         $producer = new Producer($connection);
         $producer->send($producer->createMessage('my_queue', ''));
@@ -59,14 +54,7 @@ class ProducerTest extends TestCase
      */
     public function testBodyAsObjectWithMethodToString(): void
     {
-        $connection = new class extends MockConnection {
-            public function insert($table, array $data, array $types = []): int
-            {
-                self::$data['insert'] = [$table, $data, $types];
-
-                return 1;
-            }
-        };
+        $connection = $this->getMockConnectionWithInsert(1);
 
         $body = new class() {
             public string $data = 'my_data';
@@ -86,32 +74,21 @@ class ProducerTest extends TestCase
 
     public function testBodyAsArray(): void
     {
-        $connection = new class extends MockConnection {
-            public function insert($table, array $data, array $types = []): int
-            {
-                self::$data['insert'] = [$table, $data, $types];
-
-                return 1;
-            }
-        };
+        $connection = $this->getMockConnectionWithInsert(1);
 
         $producer = new Producer($connection);
         $producer->send($producer->createMessage('my_queue', ['my_data']));
 
         self::assertEquals('queue', ($connection::$data)['insert'][0]);
-        self::assertEquals('["my_data"]', ($connection::$data)['insert'][1]['body']);
+        self::assertEquals(
+            Config::getDefault()->getSerializer()->serialize(['my_data']),
+            ($connection::$data)['insert'][1]['body']
+        );
     }
 
     public function testDispatch(): void
     {
-        $connection = new class extends MockConnection {
-            public function insert($table, array $data, array $types = []): int
-            {
-                self::$data['insert'] = [$table, $data, $types];
-
-                return 1;
-            }
-        };
+        $connection = $this->getMockConnectionWithInsert(1);
 
         $job = new class() extends Job {
             public function handle(Message $message, Producer $producer): string
@@ -126,19 +103,26 @@ class ProducerTest extends TestCase
         $producer->dispatch('job', ['my_data']);
 
         self::assertEquals('queue', ($connection::$data)['insert'][0]);
-        self::assertEquals('["my_data"]', ($connection::$data)['insert'][1]['body']);
+        self::assertEquals(
+            Config::getDefault()->getSerializer()->serialize(['my_data']),
+            ($connection::$data)['insert'][1]['body']
+        );
+    }
+
+    public function testFailureSendMessage(): void
+    {
+        $connection = $this->getMockConnectionWithInsert(0);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The transport fails to send the message due to some internal error.');
+
+        $producer = new Producer($connection);
+        $producer->send(new Message('my_queue', ''));
     }
 
     public function testDispatchWithNonExistent(): void
     {
-        $connection = new class extends MockConnection {
-            public function insert($table, array $data, array $types = []): int
-            {
-                self::$data['insert'] = [$table, $data, $types];
-
-                return 1;
-            }
-        };
+        $connection = $this->getMockConnectionWithInsert(1);
 
         $config = (new Config())->registerJobAlias('job', 'test');
 
@@ -152,35 +136,53 @@ class ProducerTest extends TestCase
 
     public function testCallableBody(): void
     {
-        $connection = new class extends MockConnection {
-            public function insert($table, array $data, array $types = []): int
-            {
-                self::$data['insert'] = [$table, $data, $types];
-
-                return 1;
-            }
-        };
+        $connection = $this->getMockConnectionWithInsert(1);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The closure cannot be serialized.');
 
-        (new Producer($connection))->createMessage('my_queue', static function (): void {
-        });
+        (new Producer($connection))->createMessage('my_queue', static function (): void {});
     }
 
-    public function testFailureSendMessage(): void
+    public function testDispatchWithNonExistentJob(): void
     {
-        $connection = new class extends MockConnection {
+        $connection = $this->getMockConnectionWithInsert(1);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Job class "%s" doesn\'t exist.', 'non_existent_job'));
+
+        (new Producer($connection))->dispatch('non_existent_job', []);
+    }
+
+    public function testDispatchWithNonExistentJobByNotExtendsJobClass(): void
+    {
+        $connection = $this->getMockConnectionWithInsert(1);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Job class "%s" doesn\'t extends "%s".', stdClass::class, Job::class));
+
+        (new Producer($connection))->dispatch(stdClass::class, []);
+    }
+
+    /**
+     * @param int $value
+     * @return MockConnection
+     */
+    private function getMockConnectionWithInsert(int $value): MockConnection
+    {
+        return new class ($value) extends MockConnection {
+            private int $value;
+            public function __construct(int $value, ?AbstractSchemaManager $abstractSchemaManager = null)
+            {
+                $this->value = $value;
+                parent::__construct($abstractSchemaManager);
+            }
             public function insert($table, array $data, array $types = []): int
             {
-                return 0;
+                self::$data['insert'] = [$table, $data, $types];
+
+                return $this->value;
             }
         };
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The transport fails to send the message due to some internal error.');
-
-        $producer = new Producer($connection);
-        $producer->send(new Message('my_queue', ''));
     }
 }
