@@ -8,11 +8,24 @@ A changelog of all notable changes made to this library.
 
 
 1.0.0 under development
--------------------
+----------------------
 
 
 1.0.0-Beta under development
--------------------
+----------------------
+
+
+1.0.0-2-Alpha 13.02.2021
+----------------------
+- *ENH*: added work with jobs
+- *ENH*: added work with processors
+- *ENH*: added serializer fo message body
+- *ENH*: added [MessageHydrator](./src/MessageHydrator.php) (for change system properties)
+- *ENH*: added base [Config](./src/Config.php)
+- *ENH*: expanded consumer work algorithms
+- *ENH*: increased test coverage
+- *ENH*: improved documentation
+- *ENH*: updated Dockerfile in example (strict version for: php, composer, xdebug)
 
 
 1.0.0-Alpha 13.02.2021
