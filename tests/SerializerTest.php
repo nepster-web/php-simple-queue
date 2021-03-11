@@ -6,11 +6,9 @@ namespace Simple\QueueTest;
 
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\Serializer\BaseSerializer;
+use Symfony\Component\Serializer\Serializer;
 use Simple\Queue\Serializer\SymfonySerializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class SerializerTest
@@ -33,7 +31,8 @@ class SerializerTest extends TestCase
     {
         $serializer = new Serializer(
             [
-            ], [
+            ],
+            [
                 new JsonEncoder(),
             ]
         );

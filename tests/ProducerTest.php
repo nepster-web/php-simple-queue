@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use stdClass;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Simple\Queue\Job;
@@ -16,7 +16,7 @@ use InvalidArgumentException;
 use Doctrine\DBAL\Types\Types;
 use PHPUnit\Framework\TestCase;
 use Simple\QueueTest\Helper\MockConnection;
-use stdClass;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
 /**
  * Class ProducerTest
@@ -141,7 +141,8 @@ class ProducerTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The closure cannot be serialized.');
 
-        (new Producer($connection))->createMessage('my_queue', static function (): void {});
+        (new Producer($connection))->createMessage('my_queue', static function (): void {
+        });
     }
 
     public function testDispatchWithNonExistentJob(): void
@@ -170,13 +171,15 @@ class ProducerTest extends TestCase
      */
     private function getMockConnectionWithInsert(int $value): MockConnection
     {
-        return new class ($value) extends MockConnection {
+        return new class($value) extends MockConnection {
             private int $value;
+
             public function __construct(int $value, ?AbstractSchemaManager $abstractSchemaManager = null)
             {
                 $this->value = $value;
                 parent::__construct($abstractSchemaManager);
             }
+
             public function insert($table, array $data, array $types = []): int
             {
                 self::$data['insert'] = [$table, $data, $types];

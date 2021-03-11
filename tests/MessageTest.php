@@ -6,11 +6,11 @@ namespace Simple\QueueTest;
 
 use LogicException;
 use DateTimeImmutable;
-use Simple\Queue\MessageHydrator;
 use Simple\Queue\Status;
 use Simple\Queue\Message;
 use Simple\Queue\Priority;
 use PHPUnit\Framework\TestCase;
+use Simple\Queue\MessageHydrator;
 
 /**
  * Class MessageTest

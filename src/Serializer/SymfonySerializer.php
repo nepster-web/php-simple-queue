@@ -24,7 +24,8 @@ class SymfonySerializer implements SerializerInterface
         $this->serializer = new Serializer(
             [
 
-            ], [
+            ],
+            [
                 new JsonEncoder(),
             ]
         );

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Simple\QueueTest;
 
 use DateTimeImmutable;
+use Simple\Queue\Status;
 use Simple\Queue\Message;
+use Simple\Queue\Priority;
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\MessageHydrator;
-use Simple\Queue\Priority;
-use Simple\Queue\Status;
 
 /**
  * Class MessageHydratorTest

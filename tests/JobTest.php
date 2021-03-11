@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
-use PHPUnit\Framework\TestCase;
-use Simple\Queue\Consumer;
 use Simple\Queue\Job;
 use Simple\Queue\Message;
+use Simple\Queue\Consumer;
 use Simple\Queue\Producer;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class JobTest
