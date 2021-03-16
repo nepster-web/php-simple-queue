@@ -247,12 +247,12 @@ class Message
     }
 
     /**
-     * @param Priority $priority
+     * @param int $priority
      * @return $this
      */
-    public function changePriority(Priority $priority): self
+    public function changePriority(int $priority): self
     {
-        $this->priority = $priority;
+        $this->priority = new Priority($priority);
 
         return $this;
     }

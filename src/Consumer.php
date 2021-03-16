@@ -131,7 +131,7 @@ class Consumer
             ->modify(sprintf('+%s seconds', $this->config->getRedeliveryTimeInSeconds()));
 
         $redeliveredMessage = (new Message($message->getQueue(), $message->getBody()))
-            ->changePriority(new Priority($message->getPriority()))
+            ->changePriority($message->getPriority())
             ->setEvent($message->getEvent())
             ->setRedeliveredAt($message->getRedeliveredAt() ?: $redeliveredTime);
 

@@ -22,12 +22,23 @@ Let's define the terms:
 * **Consumer** - handler, built on top of a transport functionality. The goal of the component is to simply consume messages.
 * **Message** - data to be processed.
 
-<br>
 
 Next you need to configure and run **Consumer** and then send messages.
 
-<br>
 
+**Config:**
+-------------------------------
+
+You can use config for producer and consumer:
+
+```php
+$config = \Simple\Queue\Config::getDefault()
+    ->changeNumberOfAttemptsBeforeFailure(5)
+    ->changeRedeliveryTimeInSeconds(180)
+    ->withSerializer(new \Simple\Queue\Serializer\SymfonySerializer());
+```
+
+<br>
 
 **Example of message sending:**
 -------------------------------
@@ -42,7 +53,7 @@ $producer = new \Simple\Queue\Producer($connection);
 
 $message = (new \Simple\Queue\Message('my_queue', 'my_data'))
     ->setEvent('my_event')
-    ->changePriority(new Priority(Priority::VERY_HIGH));
+    ->changePriority(\Simple\Queue\Priority::VERY_HIGH);
 
 $producer->send($message);
 ```
@@ -51,22 +62,18 @@ You can send a message from anywhere in the application to process it in the bac
 
 <br>
 
-**Config:**
--------------------------------
-
-```php
- // 
-```
-
-
-<br>
-
-
 **Example of message sending through job:**
 -------------------------------
 
 ```php
- //
+$connection = \Doctrine\DBAL\DriverManager::getConnection([
+    'driver' => 'pdo_sqlite',
+    'path' => '/db/queue.db'
+]);
+
+$producer = new \Simple\Queue\Producer($connection);
+
+$producer->dispatch(MyJob::class, ['key' => 'value']);
 ```
 
 <br>
@@ -79,11 +86,12 @@ Description of the base entity [Message](../../src/Message.php)
 ```php
 
 // create new Message
-$message = new Message('my_queue', 'my_data');
+$message = new \Simple\Queue\Message('my_queue', 'my_data');
 
 // public getters
 $message->getId();
 $message->getStatus();
+$message->isJob();
 $message->getError();
 $message->getExactTime();
 $message->getCreatedAt();
