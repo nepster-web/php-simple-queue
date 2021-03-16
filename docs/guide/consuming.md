@@ -16,7 +16,7 @@ An example of using this library.
 
 ## Consuming
 
-You need to configure [Consumer.php](./../../src/Consumer.php) to read and processing messages from the queue.
+You need to configure [Consumer](./../../src/Consumer.php) to read and processing messages from the queue.
 
 You can use a simple php cli, [Symfony/Console](https://symfony.com/doc/current/components/console.html)
 or any other component, it really doesn't matter.
@@ -26,6 +26,7 @@ The main idea is to run Consumer in a separate process in the background.
 Use your imagination to handling your messages.
 
 
+<br>
 
 **Simple example for consuming with processors:**
 -------------------------------
@@ -45,14 +46,8 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'path' => '/db/queue.db'
 ]);
 
-$tableCreator = new \Simple\Queue\QueueTableCreator($connection);
-
 $producer = new \Simple\Queue\Producer($connection);
 $consumer = new \Simple\Queue\Consumer($connection, $producer);
-
-// create table for queue messages
-$tableCreator->createDataBaseTable();
-
 
 echo 'Start consuming' . PHP_EOL;
 
@@ -68,17 +63,19 @@ $consumer->bind('my_queue', static function(\Simple\Queue\Message $message, \Sim
 $consumer->consume();
 ```
 
+<br>
 
 
-**Simple example for consuming with jobs:**
+**Consuming algorithm:**
 -------------------------------
 
+????
 
 
 
 
 
-
+<br>
 
 **Custom example for consuming:**
 -------------------------------
@@ -124,10 +121,11 @@ while (true) {
 }
 ```
 
+<br>
 
 ## Message processing statuses
 
-if you use jobs or processors when processing a message, you must return the appropriate status:
+If you use jobs or processors when processing a message, you must return the appropriate status:
 
 * **ACK** - `\Simple\Queue\Consumer::STATUS_ACK` - message has been successfully processed and will be removed from the queue.
 
@@ -137,7 +135,7 @@ if you use jobs or processors when processing a message, you must return the app
 
 * **REQUEUE** - `\Simple\Queue\Consumer::STATUS_REQUEUE` - message has not been processed, it is necessary redelivered.
 
-
+<br>
 
 ## Run in background process
 
