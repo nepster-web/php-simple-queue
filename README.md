@@ -75,7 +75,7 @@ $consumer->bind('my_queue', static function(\Simple\Queue\Message $message, \Sim
     // Your message handling logic
     var_dump($message->getBody() . PHP_EOL);
 
-    return \Simple\Queue\Consumer::ACK;
+    return \Simple\Queue\Consumer::STATUS_ACK;
 });
 
 $consumer->consume();

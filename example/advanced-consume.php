@@ -16,14 +16,13 @@ $consumer = new \Simple\Queue\Consumer($connection, $producer, null);
 
 echo 'Start consuming' . PHP_EOL;
 
-
 // process all messages from queue
 $consumer->bind('my_queue', static function(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string {
 
     // Your message handling logic
     var_dump($message->getBody() . PHP_EOL);
 
-    return \Simple\Queue\Consumer::ACK;
+    return \Simple\Queue\Consumer::STATUS_ACK;
 });
 
 $consumer->consume();

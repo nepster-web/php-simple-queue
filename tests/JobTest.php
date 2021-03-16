@@ -38,7 +38,7 @@ class JobTest extends TestCase
         return new class extends Job {
             public function handle(Message $message, Producer $producer): string
             {
-                return Consumer::ACK;
+                return Consumer::STATUS_ACK;
             }
         };
     }

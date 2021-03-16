@@ -20,13 +20,13 @@ use Doctrine\DBAL\Schema\SchemaException;
 class Consumer
 {
     /** Use to mark results as successful */
-    public const ACK = 'ACK';
+    public const STATUS_ACK = 'ACK';
 
     /** Use one more try if necessary */
-    public const REJECT = 'REJECT';
+    public const STATUS_REJECT = 'REJECT';
 
     /** Use in case of a delayed queue */
-    public  const REQUEUE = 'REQUEUE';
+    public const STATUS_REQUEUE = 'REQUEUE';
 
     /** @var Connection */
     protected Connection $connection;
@@ -172,7 +172,7 @@ class Consumer
     }
 
     /**
-     * Registering a queue handler
+     * Registering a processor for queue
      *
      * @param string $queue
      * @param callable $processor
@@ -199,6 +199,8 @@ class Consumer
     {
         (new QueueTableCreator($this->connection))->createDataBaseTable();
 
+        // TODO: check which queues are binding
+
         while (true) {
             if ($message = $this->fetchMessage($queues)) {
                 try {
@@ -215,10 +217,9 @@ class Consumer
                             ->increaseAttempt()
                             ->getMessage();
                     }
-
                     try {
                         $this->reject($message, true);
-                    } catch (RuntimeException|\Doctrine\DBAL\Exception $exception) {
+                    } catch (\Doctrine\DBAL\Exception $exception) {
                         // maybe lucky later
                     }
                 }
@@ -300,19 +301,19 @@ class Consumer
      */
     protected function processResult(string $result, Message $message): void
     {
-        if ($result === self::ACK) {
+        if ($result === self::STATUS_ACK) {
             $this->acknowledge($message);
 
             return;
         }
 
-        if ($result === self::REJECT) {
+        if ($result === self::STATUS_REJECT) {
             $this->reject($message);
 
             return;
         }
 
-        if ($result === self::REQUEUE) {
+        if ($result === self::STATUS_REQUEUE) {
             $this->reject($message, true);
 
             return;
