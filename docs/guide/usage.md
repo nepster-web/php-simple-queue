@@ -38,6 +38,7 @@ $config = \Simple\Queue\Config::getDefault()
     ->withSerializer(new \Simple\Queue\Serializer\SymfonySerializer());
 ```
 
+
 <br>
 
 **Example of message sending:**
@@ -48,7 +49,14 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'driver' => 'pdo_sqlite',
     'path' => '/db/queue.db'
 ]);
+```
 
+<br>
+
+**Example of message sending:**
+-------------------------------
+
+```php
 $producer = new \Simple\Queue\Producer($connection);
 
 $message = (new \Simple\Queue\Message('my_queue', 'my_data'))
@@ -56,6 +64,14 @@ $message = (new \Simple\Queue\Message('my_queue', 'my_data'))
     ->changePriority(\Simple\Queue\Priority::VERY_HIGH);
 
 $producer->send($message);
+```
+
+or a simpler example:
+
+```php
+$producer = new \Simple\Queue\Producer($connection);
+
+$producer->send($producer->createMessage('my_queue', ['my_data']));
 ```
 
 You can send a message from anywhere in the application to process it in the background. 
@@ -66,11 +82,6 @@ You can send a message from anywhere in the application to process it in the bac
 -------------------------------
 
 ```php
-$connection = \Doctrine\DBAL\DriverManager::getConnection([
-    'driver' => 'pdo_sqlite',
-    'path' => '/db/queue.db'
-]);
-
 $producer = new \Simple\Queue\Producer($connection);
 
 $producer->dispatch(MyJob::class, ['key' => 'value']);
