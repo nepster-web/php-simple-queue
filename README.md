@@ -50,7 +50,7 @@ or add
 :computer: Basic Usage
 ----------------------
 
-### Send to queue (producing)
+### Send a message to queue (producing)
 
 ```php
 // $connection - create doctrine connection
@@ -59,6 +59,16 @@ $producer = new \Simple\Queue\Producer($connection);
 
 $message = new Message('my_queue', json_decode($data));
 $producer->send($message);
+```
+
+### Job dispatching (producing)
+
+```php
+// $connection - create doctrine connection
+
+$producer = new \Simple\Queue\Producer($connection);
+
+$producer->dispatch(MyJob::class, ['key' => 'value']);
 ```
 
 ### Processing messages from queue (consuming)
@@ -79,16 +89,6 @@ $consumer->bind('my_queue', static function(\Simple\Queue\Message $message, \Sim
 });
 
 $consumer->consume();
-```
-
-### Work with messages through jobs (producing)
-
-```php
-// $connection - create doctrine connection
-
-$producer = new \Simple\Queue\Producer($connection);
-
-$producer->dispatch(MyJob::class, ['key' => 'value']);
 ```
 
 For more details see the [example code](./example) and read the [guide](./docs/guide/example.md).

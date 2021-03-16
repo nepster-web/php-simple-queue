@@ -20,7 +20,7 @@ class ConfigTest extends TestCase
     public function testSuccess(): void
     {
         $config = (new Config())
-            ->changeRedeliveryTime(250)
+            ->changeRedeliveryTimeInSeconds(250)
             ->changeNumberOfAttemptsBeforeFailure(4)
             ->registerJobAlias('test', 'TestClass')
             ->withSerializer($this->createMock(SerializerInterface::class));

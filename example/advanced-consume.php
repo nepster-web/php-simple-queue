@@ -10,8 +10,12 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'path' => '/db/queue.db',
 ]);
 
-$producer = new \Simple\Queue\Producer($connection, null);
-$consumer = new \Simple\Queue\Consumer($connection, $producer, null);
+$config = \Simple\Queue\Config::getDefault()
+    ->changeRedeliveryTimeInSeconds(100)
+    ->changeNumberOfAttemptsBeforeFailure(3);
+
+$producer = new \Simple\Queue\Producer($connection, $config);
+$consumer = new \Simple\Queue\Consumer($connection, $producer, $config);
 
 
 echo 'Start consuming' . PHP_EOL;

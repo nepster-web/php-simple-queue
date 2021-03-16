@@ -95,7 +95,7 @@ class Config
      * @param int $seconds
      * @return $this
      */
-    public function changeRedeliveryTime(int $seconds): self
+    public function changeRedeliveryTimeInSeconds(int $seconds): self
     {
         $this->redeliveryTimeInSeconds = $seconds;
 

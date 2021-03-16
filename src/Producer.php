@@ -21,7 +21,7 @@ class Producer
     private Connection $connection;
 
     /** @var Config|null */
-    private ?Config $config;
+    private ?Config $config = null;
 
     /**
      * Producer constructor.
@@ -63,7 +63,10 @@ class Producer
     public function dispatch(string $jobName, array $data): void
     {
         if ($this->config->hasJob($jobName) && (class_exists($this->config->getJob($jobName)) === false)) {
-            throw new InvalidArgumentException(sprintf('A non-existent class "%s" is declared in the config.', $jobName));
+            throw new InvalidArgumentException(sprintf(
+                'A non-existent class "%s" is declared in the config.',
+                $jobName
+            ));
         }
 
         if (($this->config->hasJob($jobName) === false) && (class_exists($jobName) === false)) {
@@ -101,7 +104,6 @@ class Producer
             'error' => $message->getError(),
             'exact_time' => $message->getExactTime(),
         ];
-
         try {
             $rowsAffected = $this->connection->insert(QueueTableCreator::getTableName(), $dataMessage, [
                 'id' => Types::GUID,
@@ -117,7 +119,6 @@ class Producer
                 'error' => Types::TEXT,
                 'exact_time' => Types::BIGINT,
             ]);
-
             if ($rowsAffected !== 1) {
                 throw new RuntimeException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
             }

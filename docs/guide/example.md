@@ -20,6 +20,8 @@ Example of sending messages to a queue: [produce.php](../../example/produce.php)
 
 Example of processing messages from a queue: [consume.php](../../example/consume.php)
 
+Advanced example of processing messages from a queue: [advanced-consume.php](../../example/advanced-consume.php)
+
 
 ## Quick run with docker
 

@@ -11,6 +11,9 @@ use Laminas\Hydrator\Strategy\HydratorStrategy;
 
 /**
  * Class MessageHydrator
+ *
+ * Hydrator which changes system data
+ *
  * @package Simple\Queue
  */
 class MessageHydrator
