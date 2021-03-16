@@ -44,7 +44,7 @@ $config = \Simple\Queue\Config::getDefault()
 **Create connection:**
 -------------------------------
 
-Create a new connection:
+You can get a DBAL Connection through the Doctrine\DBAL\DriverManager class.
 
 ```php
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
@@ -70,7 +70,7 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
 
 <br>
 
-**Send a message to queue :**
+**Send a message to queue:**
 -------------------------------
 
 ```php
@@ -106,10 +106,14 @@ $producer->dispatch(MyJob::class, ['key' => 'value']);
 
 <br>
 
+> You can send a message to the queue from anywhere in the application where available $producer.
+
+<br>
+
 **Message**
 ----------------------
 
-Description of the base entity [Message](../../src/Message.php)
+Description of the base entity [Message](../../src/Message.php).
 
 ```php
 
