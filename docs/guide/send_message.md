@@ -25,6 +25,7 @@ Let's define the terms:
 
 Next you need to configure and run **Consumer** and then send messages.
 
+<br>
 
 **Config:**
 -------------------------------
@@ -38,11 +39,12 @@ $config = \Simple\Queue\Config::getDefault()
     ->withSerializer(new \Simple\Queue\Serializer\SymfonySerializer());
 ```
 
-
 <br>
 
-**Example of message sending:**
+**Create connection:**
 -------------------------------
+
+Create a new connection:
 
 ```php
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
@@ -51,9 +53,24 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
 ]);
 ```
 
+or
+
+```php
+$connection = \Doctrine\DBAL\DriverManager::getConnection([
+    'dbname' => 'my_db',
+    'user' => 'root',
+    'password' => '*******',
+    'host' => 'localhost',
+    'port' => '54320',
+    'driver' => 'pdo_pgsql',
+]);
+```
+
+[See more information.](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html)
+
 <br>
 
-**Example of message sending:**
+**Send a message to queue :**
 -------------------------------
 
 ```php
@@ -78,7 +95,7 @@ You can send a message from anywhere in the application to process it in the bac
 
 <br>
 
-**Example of message sending through job:**
+**Send a message to queue through job:**
 -------------------------------
 
 ```php
