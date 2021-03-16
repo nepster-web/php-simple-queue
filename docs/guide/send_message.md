@@ -13,6 +13,7 @@ An example of using this library.
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
 
+<br>
 
 ## :page_facing_up: Usage basics
 

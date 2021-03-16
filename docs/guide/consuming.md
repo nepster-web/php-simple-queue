@@ -13,6 +13,7 @@ An example of using this library.
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
 
+<br>
 
 ## Consuming
 
@@ -174,7 +175,7 @@ docker exec -t -d you-container-name sh -c "php ./path/to/consume.php"
 ```
 
 
-#### Using supervisor
+### Using supervisor
 
 Сonfigure your supervisor config file `/etc/supervisor/conf.d/consume.conf`
 ```bash

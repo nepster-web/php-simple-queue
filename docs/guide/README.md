@@ -15,7 +15,6 @@ It supports queues based on **DB**.
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
 
-
 <br>
 
 [Go back](https://github.com/nepster-web/php-simple-queue)

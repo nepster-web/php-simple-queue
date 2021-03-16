@@ -13,6 +13,7 @@ Installation recommendations.
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
 
+<br>
 
 ## :page_facing_up: Install
 

@@ -13,6 +13,7 @@ Demonstration of work PHP Simple Queue using SQLite.
 * **[Example](./example.md)**
 * [Cookbook](./cookbook.md)
 
+<br>
 
 ## :page_facing_up: Example
 
