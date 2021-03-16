@@ -50,6 +50,19 @@ or add
 :computer: Basic Usage
 ----------------------
 
+Create a database connection:
+
+```php
+$connection = \Doctrine\DBAL\DriverManager::getConnection([
+    'dbname' => 'my_db',
+    'user' => 'root',
+    'password' => '*******',
+    'host' => 'localhost',
+    'port' => '54320',
+    'driver' => 'pdo_pgsql',
+]);
+```
+
 ### Send a message to queue (producing)
 
 ```php
