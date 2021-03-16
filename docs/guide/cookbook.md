@@ -8,7 +8,7 @@ Tips, recommendations and best practices for use this library.
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Usage basics](./usage.md)
+* [Send message](./send_message.md)
 * [Consuming](./consuming.md)
 * [Example](./example.md)
 * **[Cookbook](./cookbook.md)**
