@@ -1,4 +1,4 @@
-> This package is under development. Api classes of the app can be changed.
+> This package is under development. Api classes of this application can be changed.
 
 <p align="center">
     <h1 align="center">PHP Simple Queue</h1>

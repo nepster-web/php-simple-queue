@@ -11,12 +11,20 @@ A changelog of all notable changes made to this library.
 ----------------------
 
 
+1.0.0-RC under development
+----------------------
+
+
 1.0.0-Beta under development
 ----------------------
 
 
-1.0.0-2-Alpha 13.02.2021
-----------------------
+1.0.0-Alpha-3 ??.??.2021
+------------------------
+
+
+1.0.0-Alpha-2 17.03.2021
+------------------------
 - *ENH*: added work with jobs
 - *ENH*: added work with processors
 - *ENH*: added serializer fo message body
