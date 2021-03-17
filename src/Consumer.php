@@ -204,6 +204,9 @@ class Consumer
         while (true) {
             if ($message = $this->fetchMessage($queues)) {
                 try {
+
+                    // TODO: set IN_PROCESS status
+
                     $this->processing($message);
                 } catch (Throwable $throwable) {
                     if ($message->getAttempts() >= $this->config->getNumberOfAttemptsBeforeFailure()) {
@@ -223,7 +226,9 @@ class Consumer
                         // maybe lucky later
                     }
                 }
+                continue;
             }
+            sleep(1);
         }
     }
 

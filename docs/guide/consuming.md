@@ -70,13 +70,25 @@ $consumer->consume();
 **Consuming algorithm:**
 -------------------------------
 
-????
+```$consumer->consume();``` - base realization of consumer.
 
+If the message table does not exist, it will be created.
 
+Next, will start endless loop ```while(true)``` to get the next message from the queue.
+if there are no messages, there will be a sustained seconds pause.
 
+When the message is received, it will be processed. Job has priority over the processor.
 
+If an uncaught error occurs, it will be caught and increment first processing attempt. 
+
+After several unsuccessful attempts, the message will status `\Simple\Queue\Status::FAILURE`.
+
+If there are no handlers for the message, the message will status `\Simple\Queue\Status::UNDEFINED_HANDLER`.
+
+> Messages are processed with statuses: `\Simple\Queue\Status::NEW` and `\Simple\Queue\Status::REDELIVERED`
 
 <br>
+
 
 **Custom example for consuming:**
 -------------------------------
