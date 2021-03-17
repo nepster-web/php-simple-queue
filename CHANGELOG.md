@@ -19,12 +19,13 @@ A changelog of all notable changes made to this library.
 ----------------------
 
 
-1.0.0-Alpha-3 ??.??.2021
-------------------------
+1.0.0-Alpha-3 ???? ??, 2021
+---------------------------
+- *ENH*: [composer.json](./composer.json) updating package versions
 
 
-1.0.0-Alpha-2 17.03.2021
-------------------------
+1.0.0-Alpha-2 March 17, 2021
+----------------------------
 - *ENH*: added work with jobs
 - *ENH*: added work with processors
 - *ENH*: added serializer fo message body
@@ -36,8 +37,8 @@ A changelog of all notable changes made to this library.
 - *ENH*: updated Dockerfile in example (strict version for: php, composer, xdebug)
 
 
-1.0.0-Alpha 13.02.2021
-----------------------
+1.0.0-Alpha March 13, 2021
+--------------------------
 - *ENH*: Repository configuration (travis, scrutinizer, php cs, etc)
 - *ENH*: Add simple example with consume and produce
 - *ENH*: Ability to run example with docker
