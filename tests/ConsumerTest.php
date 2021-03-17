@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
-use LogicException;
 use DateTimeImmutable;
 use ReflectionProperty;
+use Simple\Queue\Config;
 use Simple\Queue\Status;
 use Simple\Queue\Message;
 use Simple\Queue\Consumer;
-use Simple\Queue\Priority;
 use Simple\Queue\Producer;
 use Doctrine\DBAL\Types\Types;
 use PHPUnit\Framework\TestCase;
@@ -48,6 +47,7 @@ class ConsumerTest extends TestCase
 
         $this->setMessageId($message, '71a384ad-952d-417f-9dc5-dfdb5b01704d');
 
+        $config = new Config();
         $producer = new class(new MockConnection()) extends Producer {
             public static Message $message;
 
@@ -72,7 +72,9 @@ class ConsumerTest extends TestCase
 
         self::assertEquals(Status::REDELIVERED, $producer::$message->getStatus());
         self::assertEquals(
-            (new DateTimeImmutable())->format('Y-m-d H:i:s'),
+            (new DateTimeImmutable())
+                ->modify(sprintf('+%s seconds', $config->getRedeliveryTimeInSeconds()))
+                ->format('Y-m-d H:i:s'),
             $producer::$message->getRedeliveredAt()->format('Y-m-d H:i:s')
         );
     }
@@ -134,7 +136,8 @@ class ConsumerTest extends TestCase
     {
         $message = new Message('my_queue', 'my_data');
 
-        $consumer = new class(new MockConnection(), new Producer(new MockConnection())) extends Consumer {
+        $config = new Config();
+        $consumer = new class(new MockConnection(), new Producer(new MockConnection()), $config) extends Consumer {
             public function publicForRedeliveryMessage(Message $message): Message
             {
                 return $this->forRedeliveryMessage($message);
@@ -148,74 +151,10 @@ class ConsumerTest extends TestCase
 
         self::assertEquals(Status::REDELIVERED, $newMessage->getStatus());
         self::assertEquals(
-            (new DateTimeImmutable())->format('Y-m-d H:i:s'),
+            (new DateTimeImmutable())
+                ->modify(sprintf('+%s seconds', $config->getRedeliveryTimeInSeconds()))
+                ->format('Y-m-d H:i:s'),
             $newMessage->getRedeliveredAt()->format('Y-m-d H:i:s')
-        );
-    }
-
-    public function testCreateMessageFromArrayData(): void
-    {
-        $consumer = new class(new MockConnection(), new Producer(new MockConnection())) extends Consumer {
-            public function publicCreateMessage(array $data): Message
-            {
-                return $this->createMessage($data);
-            }
-        };
-
-        $message = $consumer->publicCreateMessage([
-            'id' => '3114be4a-33ae-499a-9e02-db3eeb077dfa',
-            'body' => 'my_data',
-            'queue' => 'my_queue',
-            'event' => 'my_event',
-            'attempts' => 7,
-            'error' => 'Exception',
-            'status' => Status::NEW,
-            'priority' => Priority::DEFAULT,
-            'exact_time' => strtotime('2021-02-22 10:00:00'),
-            'created_at' => '2021-02-22 10:00:00',
-            'redelivered_at' => '2021-02-22 11:00:00',
-        ]);
-
-        self::assertEquals('3114be4a-33ae-499a-9e02-db3eeb077dfa', $message->getId());
-        self::assertEquals('my_queue', $message->getQueue());
-        self::assertEquals('my_event', $message->getEvent());
-        self::assertEquals(7, $message->getAttempts());
-        self::assertEquals('my_data', $message->getBody());
-        self::assertEquals('Exception', $message->getError());
-        self::assertEquals(Status::NEW, $message->getStatus());
-        self::assertEquals(Priority::DEFAULT, $message->getPriority());
-        self::assertEquals(strtotime('2021-02-22 10:00:00'), $message->getExactTime());
-        self::assertEquals('2021-02-22 10:00:00', $message->getCreatedAt()->format('Y-m-d H:i:s'));
-        self::assertEquals('2021-02-22 11:00:00', $message->getRedeliveredAt()->format('Y-m-d H:i:s'));
-    }
-
-    public function testCreateMessageFromEmptyArray(): void
-    {
-        $consumer = new class(new MockConnection(), new Producer(new MockConnection())) extends Consumer {
-            public function publicCreateMessage(array $data): Message
-            {
-                return $this->createMessage($data);
-            }
-        };
-
-        $message = $consumer->publicCreateMessage([]);
-
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('The message has no id. It looks like it was not sent to the queue.');
-        $message->getId();
-
-        self::assertEquals('default', $message->getQueue());
-        self::assertEquals('', $message->getBody());
-        self::assertNull($message->getEvent());
-        self::assertNull($message->getError());
-        self::assertNull($message->getRedeliveredAt());
-        self::assertEquals(0, $message->getAttempts());
-        self::assertEquals(Status::NEW, $message->getStatus());
-        self::assertEquals(Priority::DEFAULT, $message->getPriority());
-        self::assertEquals(time(), $message->getExactTime());
-        self::assertEquals(
-            (new DateTimeImmutable())->format('Y-m-d H:i:s'),
-            $message->getCreatedAt()->format('Y-m-d H:i:s')
         );
     }
 

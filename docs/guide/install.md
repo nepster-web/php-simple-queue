@@ -8,10 +8,12 @@ Installation recommendations.
 
 * [Guide](./README.md)
 * **[Install](./install.md)**
-* [Usage basics](./usage.md)
+* [Send message](./send_message.md)
+* [Consuming](./consuming.md)
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
 
+<br>
 
 ## :page_facing_up: Install
 
@@ -31,6 +33,6 @@ or add
 
 
 
-> TIP:  When install this package, specify the exact version. For example: `"nepster-web/php-simple-queue": "0.0.1"`
+> TIP:  When install this package, specify the exact version. For example: `"nepster-web/php-simple-queue": "1.0.0"`
 
 If you specify the exact version of this library it is possible to avoid problems with updating and breaking backward compatibility.

@@ -55,7 +55,9 @@ class QueueTableCreator
     {
         $schemaManager = $this->connection->getSchemaManager();
 
-        if ($schemaManager ? $schemaManager->tablesExist([self::getTableName()]) : false) {
+        $tableExists = $schemaManager ? $schemaManager->tablesExist([self::getTableName()]) : false;
+
+        if ($schemaManager === null || $tableExists === true) {
             return;
         }
 
@@ -66,6 +68,7 @@ class QueueTableCreator
         $table->addColumn('attempts', Types::SMALLINT);
         $table->addColumn('queue', Types::STRING);
         $table->addColumn('event', Types::STRING, ['notnull' => false]);
+        $table->addColumn('is_job', Types::BOOLEAN, ['default' => false]);
         $table->addColumn('body', Types::TEXT, ['notnull' => false]);
         $table->addColumn('priority', Types::SMALLINT, ['notnull' => false]);
         $table->addColumn('error', Types::TEXT, ['notnull' => false]);

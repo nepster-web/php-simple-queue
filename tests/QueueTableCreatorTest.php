@@ -56,6 +56,7 @@ class QueueTableCreatorTest extends TestCase
             'attempts' => 'smallint',
             'queue' => 'string',
             'event' => 'string',
+            'is_job' => 'boolean',
             'body' => 'text',
             'priority' => 'smallint',
             'error' => 'text',
@@ -65,5 +66,28 @@ class QueueTableCreatorTest extends TestCase
         ];
 
         self::assertEquals($expected, $tableColumns);
+    }
+
+    public function testSimulateTableCreationWithoutTableCrate(): void
+    {
+        $data = [];
+
+        $schemaManager = new class extends MockSchemaManager {
+            public function tablesExist($names): bool
+            {
+                self::$data['tablesExist'] = true;
+
+                return true;
+            }
+        };
+        $connection = new MockConnection($schemaManager);
+
+        $queueTableCreator = new QueueTableCreator($connection);
+
+        $queueTableCreator->createDataBaseTable();
+
+        $tablesExist = $schemaManager::$data['tablesExist'];
+
+        self::assertTrue($tablesExist);
     }
 }

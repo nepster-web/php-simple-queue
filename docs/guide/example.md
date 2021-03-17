@@ -8,10 +8,12 @@ Demonstration of work PHP Simple Queue using SQLite.
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Usage basics](./usage.md)
+* [Send message](./send_message.md)
+* [Consuming](./consuming.md)
 * **[Example](./example.md)**
 * [Cookbook](./cookbook.md)
 
+<br>
 
 ## :page_facing_up: Example
 
@@ -19,6 +21,9 @@ Example of sending messages to a queue: [produce.php](../../example/produce.php)
 
 Example of processing messages from a queue: [consume.php](../../example/consume.php)
 
+Advanced example of processing messages from a queue: [advanced-consume.php](../../example/advanced-consume.php)
+
+<br>
 
 ## Quick run with docker
 

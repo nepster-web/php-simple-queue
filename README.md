@@ -1,3 +1,5 @@
+> This package is under development. Api classes of this application can be changed.
+
 <p align="center">
     <h1 align="center">PHP Simple Queue</h1>
 </p>
@@ -50,7 +52,20 @@ or add
 :computer: Basic Usage
 ----------------------
 
-### Send to queue (producing)
+Create a database connection:
+
+```php
+$connection = \Doctrine\DBAL\DriverManager::getConnection([
+    'dbname' => 'my_db',
+    'user' => 'root',
+    'password' => '*******',
+    'host' => 'localhost',
+    'port' => '54320',
+    'driver' => 'pdo_pgsql',
+]);
+```
+
+### Send a message to queue (producing)
 
 ```php
 // $connection - create doctrine connection
@@ -61,7 +76,17 @@ $message = new Message('my_queue', json_decode($data));
 $producer->send($message);
 ```
 
-### Read from queue (consuming)
+### Job dispatching (producing)
+
+```php
+// $connection - create doctrine connection
+
+$producer = new \Simple\Queue\Producer($connection);
+
+$producer->dispatch(MyJob::class, ['key' => 'value']);
+```
+
+### Processing messages from queue (consuming)
 
 ```php
 // $connection - create doctrine connection
@@ -69,12 +94,16 @@ $producer->send($message);
 $producer = new \Simple\Queue\Producer($connection);
 $consumer = new \Simple\Queue\Consumer($connection, $producer);
 
-while (true) {
-    if ($message = $consumer->fetchMessage('my_queue')) {
-        // your message handling logic
-        $consumer->acknowledge($message);
-    }
-}
+// process all messages from queue
+$consumer->bind('my_queue', static function(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string {
+
+    // Your message handling logic
+    var_dump($message->getBody() . PHP_EOL);
+
+    return \Simple\Queue\Consumer::STATUS_ACK;
+});
+
+$consumer->consume();
 ```
 
 For more details see the [example code](./example) and read the [guide](./docs/guide/example.md).
@@ -98,7 +127,6 @@ make comoposer cmd='test'
 ```
 
 ---------------------------------
-
 
 ## :book: Documentation
 

@@ -7,7 +7,7 @@ include __DIR__ . '/../vendor/autoload.php';
 
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'driver' => 'pdo_sqlite',
-    'path' => '/db/queue.db'
+    'path' => '/db/queue.db',
 ]);
 
 $tableCreator = new \Simple\Queue\QueueTableCreator($connection);
@@ -23,7 +23,7 @@ echo 'Start consuming' . PHP_EOL;
 
 while (true) {
 
-    if ($message = $consumer->fetchMessage('my_queue')) {
+    if ($message = $consumer->fetchMessage(['my_queue'])) {
 
         // Your message handling logic
 

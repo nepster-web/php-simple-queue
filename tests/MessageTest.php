@@ -10,6 +10,7 @@ use Simple\Queue\Status;
 use Simple\Queue\Message;
 use Simple\Queue\Priority;
 use PHPUnit\Framework\TestCase;
+use Simple\Queue\MessageHydrator;
 
 /**
  * Class MessageTest
@@ -48,7 +49,7 @@ class MessageTest extends TestCase
 
         $time = time();
         $message = (new Message('my_queue', $body))
-            ->changePriority(new Priority(Priority::LOW))
+            ->changePriority(Priority::LOW)
             ->setEvent('my_event')
             ->setRedeliveredAt(new DateTimeImmutable());
 
@@ -64,7 +65,7 @@ class MessageTest extends TestCase
     public function testChangePriority(): void
     {
         $message = new Message('my_queue', '');
-        $message->changePriority(new Priority(Priority::HIGH));
+        $message->changePriority(Priority::HIGH);
 
         self::assertEquals(Priority::HIGH, $message->getPriority());
     }
@@ -94,5 +95,16 @@ class MessageTest extends TestCase
 
         self::assertTrue($message->isRedelivered());
         self::assertEquals($redelivered->format('Y-m-d H:i:s'), $message->getRedeliveredAt()->format('Y-m-d H:i:s'));
+    }
+
+    public function testRedeliveredAtByStatus(): void
+    {
+        $message = new Message('my_queue', '');
+
+        $message = (new MessageHydrator($message))
+            ->changeStatus(Status::REDELIVERED)
+            ->getMessage();
+
+        self::assertTrue($message->isRedelivered());
     }
 }

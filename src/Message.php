@@ -44,6 +44,9 @@ class Message
      */
     private ?string $event;
 
+    /** @var bool */
+    private bool $isJob;
+
     /**
      * Message data
      * For example: JSON, Serialized string etc.
@@ -103,6 +106,7 @@ class Message
         $this->attempts = 0;
         $this->error = null;
         $this->event = null;
+        $this->isJob = false;
         $this->exactTime = time();
         $this->createdAt = new DateTimeImmutable('now');
         $this->redeliveredAt = null;
@@ -213,6 +217,14 @@ class Message
     }
 
     /**
+     * @return bool
+     */
+    public function isJob(): bool
+    {
+        return $this->isJob;
+    }
+
+    /**
      * @param DateTimeImmutable|null $redeliveredAt
      * @return $this
      */
@@ -235,12 +247,12 @@ class Message
     }
 
     /**
-     * @param Priority $priority
+     * @param int $priority
      * @return $this
      */
-    public function changePriority(Priority $priority): self
+    public function changePriority(int $priority): self
     {
-        $this->priority = $priority;
+        $this->priority = new Priority($priority);
 
         return $this;
     }

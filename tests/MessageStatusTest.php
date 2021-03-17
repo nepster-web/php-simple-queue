@@ -37,9 +37,9 @@ class MessageStatusTest extends TestCase
 
     public function testErrorStatus(): void
     {
-        $status = new Status(Status::ERROR);
+        $status = new Status(Status::FAILURE);
 
-        self::assertEquals(Status::ERROR, $status->getValue());
+        self::assertEquals(Status::FAILURE, $status->getValue());
     }
 
     public function testAnotherStatus(): void
