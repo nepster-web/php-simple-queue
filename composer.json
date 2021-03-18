@@ -24,7 +24,7 @@
     "php": "^7.4|^8.0",
     "ext-PDO": "*",
     "ext-json": "*",
-    "doctrine/dbal": "^2.0|^3.0",
+    "doctrine/dbal": "^3.0",
     "laminas/laminas-hydrator": "^4.1",
     "ramsey/uuid": "^4.1",
     "symfony/serializer": "^5.2"
