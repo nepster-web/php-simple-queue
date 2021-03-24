@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simple\Queue;
 
+use Exception;
 use Throwable;
 use LogicException;
 use RuntimeException;
@@ -11,10 +12,15 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use InvalidArgumentException;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\DBAL\Schema\SchemaException;
 
 /**
  * Class Consumer
+ *
+ * TODO: 1 - create job instance
+ * TODO: 2 - move db operations to other class
+ * TODO: 3 - dispatch job
+ * TODO: 4 - deserialize data to job and processor
+ *
  * @package Simple\Queue
  */
 class Consumer
@@ -101,58 +107,52 @@ class Consumer
     }
 
     /**
+     * Change message status from queue
+     *
+     * @param Message $message
+     * @param Status $status
+     */
+    protected function changeMessageStatus(Message $message, Status $status): void
+    {
+        if (empty($message->getId())) {
+            throw new LogicException('The expected message has no identifier for changing status in queue.');
+        }
+
+        $this->connection->update(
+            QueueTableCreator::getTableName(),
+            ['status' => (string)$status],
+            ['id' => $message->getId()]
+        );
+
+        MessageHydrator::changeProperty($message, 'status', $status);
+    }
+
+    /**
      * Delete message from queue
      *
-     * @param string $id
-     * @throws \Doctrine\DBAL\Exception
+     * @param Message $message
      */
-    protected function deleteMessage(string $id): void
+    protected function deleteMessage(Message $message): void
     {
-        if (empty($id)) {
-            throw new LogicException(sprintf('Expected record was removed but it is not. Delivery id: "%s".', $id));
+        if (empty($message->getId())) {
+            throw new LogicException('The expected message has no identifier for removing from queue.');
         }
 
         $this->connection->delete(
             QueueTableCreator::getTableName(),
-            ['id' => $id],
+            ['id' => $message->getId()],
             ['id' => Types::GUID]
         );
-    }
-
-    /**
-     * Redelivered a message to the queue
-     *
-     * @param Message $message
-     * @return Message
-     */
-    protected function forRedeliveryMessage(Message $message): Message
-    {
-        $redeliveredTime = (new DateTimeImmutable('now'))
-            ->modify(sprintf('+%s seconds', $this->config->getRedeliveryTimeInSeconds()));
-
-        $redeliveredMessage = (new Message($message->getQueue(), $message->getBody()))
-            ->changePriority($message->getPriority())
-            ->setEvent($message->getEvent())
-            ->setRedeliveredAt($message->getRedeliveredAt() ?: $redeliveredTime);
-
-        return (new MessageHydrator($redeliveredMessage))
-            ->changeStatus(
-                ($message->getStatus() === Status::UNDEFINED_HANDLER) ?
-                    Status::UNDEFINED_HANDLER :
-                    Status::REDELIVERED
-            )
-            ->getMessage();
     }
 
     /**
      * The message has been successfully processed and will be removed from the queue
      *
      * @param Message $message
-     * @throws \Doctrine\DBAL\Exception
      */
     public function acknowledge(Message $message): void
     {
-        $this->deleteMessage($message->getId());
+        $this->deleteMessage($message);
     }
 
     /**
@@ -160,15 +160,158 @@ class Consumer
      *
      * @param Message $message
      * @param bool $requeue
-     * @throws \Doctrine\DBAL\Exception
      */
     public function reject(Message $message, bool $requeue = false): void
     {
         $this->acknowledge($message);
 
         if ($requeue) {
-            $this->producer->send($this->forRedeliveryMessage($message));
+            $this->producer->send($this->makeRedeliveryMessage($message));
         }
+    }
+
+    /**
+     * Redelivered a message to the queue
+     *
+     * TODO: add test for is job
+     * TODO: add test for set error
+     * TODO: add test for change status
+     * TODO: add test for correct increase attempt
+     * TODO: add test for count job attempts
+     *
+     * @param Message $message
+     * @return Message
+     */
+    protected function makeRedeliveryMessage(Message $message): Message
+    {
+        $newStatus = ($message->getStatus() === Status::NEW || $message->getStatus() === Status::IN_PROCESS) ?
+            Status::REDELIVERED :
+            $message->getStatus();
+
+        if ($message->isJob()) {
+            $job = $this->getJobInstance($message);
+
+            if (($message->getAttempts() + 1) >= ($job->attempts() ?: $this->config->getNumberOfAttemptsBeforeFailure())) {
+                $newStatus = Status::FAILURE;
+            }
+        }
+
+        $redeliveredTime = (new DateTimeImmutable('now'))
+            ->modify(sprintf('+%s seconds', $this->config->getRedeliveryTimeInSeconds()));
+
+        if (
+            $message->getRedeliveredAt() &&
+            $message->getRedeliveredAt()->getTimestamp() > $redeliveredTime->getTimestamp()
+        ) {
+            $redeliveredTime = $message->getRedeliveredAt();
+        }
+
+        $redeliveredMessage = (new Message($message->getQueue(), $message->getBody()))
+            ->changePriority($message->getPriority())
+            ->setEvent($message->getEvent())
+            ->setRedeliveredAt($redeliveredTime);
+
+        return (new MessageHydrator($redeliveredMessage))
+            ->changeStatus($newStatus)
+            ->jobable($message->isJob())
+            ->setError($message->getError())
+            ->changeAttempts($message->getAttempts() + 1)
+            ->getMessage();
+    }
+
+
+    /**
+     * @param Message $message
+     */
+    protected function processing(Message $message): void
+    {
+        $this->changeMessageStatus($message, new Status(Status::IN_PROCESS));
+
+        if ($message->isJob()) {
+            try {
+                $job = $this->getJobInstance($message);
+
+                $result = $job->handle($message, $this->producer);
+
+                $this->processResult($result, $message);
+            } catch (Exception $exception) {
+                MessageHydrator::changeProperty($message, 'status', new Status(Status::REDELIVERED));
+                MessageHydrator::changeProperty($message, 'error', (string)$exception);
+
+                $this->reject($message, true);
+            }
+            return;
+        }
+
+        if (isset($this->processors[$message->getQueue()])) {
+            $result = $this->processors[$message->getQueue()]($message, $this->producer);
+
+            $this->processResult($result, $message);
+
+            return;
+        }
+
+        MessageHydrator::changeProperty($message, 'status', new Status(Status::UNDEFINED_HANDLER));
+        MessageHydrator::changeProperty($message, 'error', 'Could not find any job or processor.');
+
+        $this->reject($message, true);
+    }
+
+    /**
+     * Get job instance
+     *
+     * @param Message $message
+     * @return Job
+     */
+    protected function getJobInstance(Message $message): Job
+    {
+        $jobClass = $message->getEvent();
+
+        if ($this->config->hasJob((string)$message->getEvent())) {
+            $jobClass = $this->config->getJob((string)$message->getEvent());
+        } elseif ($message->getEvent() && class_exists($message->getEvent())) {
+            $jobClass = $message->getEvent();
+        } else {
+            throw new RuntimeException(sprintf('Job "%s" is not an executable class.', $jobClass));
+        }
+
+        if (is_subclass_of($jobClass, Job::class) === false) {
+            throw new RuntimeException(sprintf('Job "%s" should extend "%s".', $jobClass, Job::class));
+        }
+
+        // TODO: create instance
+
+        /** @var Job $job */
+        $job = new $jobClass;
+
+        return $job;
+    }
+
+    /**
+     * @param string $result
+     * @param Message $message
+     */
+    protected function processResult(string $result, Message $message): void
+    {
+        if ($result === self::STATUS_ACK) {
+            $this->acknowledge($message);
+
+            return;
+        }
+
+        if ($result === self::STATUS_REJECT) {
+            $this->reject($message);
+
+            return;
+        }
+
+        if ($result === self::STATUS_REQUEUE) {
+            $this->reject($message, true);
+
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf('Unsupported result status: "%s".', $result));
     }
 
     /**
@@ -192,8 +335,6 @@ class Consumer
 
     /**
      * @param array $queues
-     * @throws SchemaException
-     * @throws \Doctrine\DBAL\Exception
      */
     public function consume(array $queues = []): void
     {
@@ -204,23 +345,10 @@ class Consumer
         while (true) {
             if ($message = $this->fetchMessage($queues)) {
                 try {
-
-                    // TODO: set IN_PROCESS status
-
                     $this->processing($message);
                 } catch (Throwable $throwable) {
-                    if ($message->getAttempts() >= $this->config->getNumberOfAttemptsBeforeFailure()) {
-                        $message = (new MessageHydrator($message))
-                            ->changeStatus(Status::FAILURE)
-                            ->setError((string)$throwable)
-                            ->getMessage();
-                    } else {
-                        $message = (new MessageHydrator($message))
-                            ->setError((string)$throwable)
-                            ->increaseAttempt()
-                            ->getMessage();
-                    }
                     try {
+                        MessageHydrator::changeProperty($message, 'error', (string)$throwable);
                         $this->reject($message, true);
                     } catch (\Doctrine\DBAL\Exception $exception) {
                         // maybe lucky later
@@ -228,102 +356,7 @@ class Consumer
                 }
                 continue;
             }
-            sleep(1);
+            usleep(200000); // 0.2 second
         }
-    }
-
-    /**
-     * @param Message $message
-     * @throws \Doctrine\DBAL\Exception
-     */
-    protected function processing(Message $message): void
-    {
-        if ($message->isJob()) {
-            if ($this->config->hasJob((string)$message->getEvent())) {
-                $jobClass = $this->config->getJob((string)$message->getEvent());
-            } elseif ($message->getEvent() && class_exists($message->getEvent())) {
-                $jobClass = $message->getEvent();
-            } else {
-                $this->rejectByError(
-                    $message,
-                    sprintf('Could not find job: "%s".', $message->getEvent()),
-                    Status::FAILURE
-                );
-
-                return;
-            }
-
-            if (is_a($jobClass, Job::class)) {
-                /** @var Job $job */
-                $job = new $job; // TODO: The job can inject custom dependencies
-                $result = $job->handle($message, $this->producer);
-
-                $this->processResult($result, $message);
-
-                return;
-            }
-
-            $this->rejectByError(
-                $message,
-                sprintf('The job "%s" does not match the required parameters.', $message->getEvent()),
-                Status::FAILURE
-            );
-
-            return;
-        }
-
-        if (isset($this->processors[$message->getQueue()])) {
-            $result = $this->processors[$message->getQueue()]($message, $this->producer);
-
-            $this->processResult($result, $message);
-
-            return;
-        }
-
-        $this->rejectByError($message, sprintf('Could not find any job or processor.'), Status::UNDEFINED_HANDLER);
-    }
-
-    /**
-     * @param Message $message
-     * @param string $error
-     * @param string $status
-     * @throws \Doctrine\DBAL\Exception
-     */
-    protected function rejectByError(Message $message, string $error, string $status): void
-    {
-        $redeliveredMessage = (new MessageHydrator($message))
-            ->changeStatus($status)
-            ->setError($error)
-            ->getMessage();
-
-        $this->reject($redeliveredMessage, true);
-    }
-
-    /**
-     * @param string $result
-     * @param Message $message
-     * @throws \Doctrine\DBAL\Exception
-     */
-    protected function processResult(string $result, Message $message): void
-    {
-        if ($result === self::STATUS_ACK) {
-            $this->acknowledge($message);
-
-            return;
-        }
-
-        if ($result === self::STATUS_REJECT) {
-            $this->reject($message);
-
-            return;
-        }
-
-        if ($result === self::STATUS_REQUEUE) {
-            $this->reject($message, true);
-
-            return;
-        }
-
-        throw new InvalidArgumentException(sprintf('Unsupported result status: "%s".', $result));
     }
 }

@@ -13,6 +13,10 @@ use Doctrine\DBAL\Types\Types;
 
 /**
  * Class Producer
+ *
+ * TODO: 1 - create job instance
+ * TODO: 2 - move db operations to other class
+ *
  * @package Simple\Queue
  */
 class Producer
@@ -62,22 +66,29 @@ class Producer
      */
     public function dispatch(string $jobName, array $data): void
     {
-        if ($this->config->hasJob($jobName) && (class_exists($this->config->getJob($jobName)) === false)) {
+        // TODO: если залетает $jobName, как класс, но в конфиге есть алиас, приоритентно используем алиас
+        // TODO: проверить и получить инстанс джобы
+        // ----------------------------------------------------------------------------------------------
+        if ($this->config->hasJob($jobName) && class_exists($this->config->getJob($jobName)) === false) {
             throw new InvalidArgumentException(sprintf(
                 'A non-existent class "%s" is declared in the config.',
                 $jobName
             ));
         }
 
-        if (($this->config->hasJob($jobName) === false) && (class_exists($jobName) === false)) {
+        if (($this->config->hasJob($jobName) === false) && class_exists($jobName) === false) {
             throw new InvalidArgumentException(sprintf('Job class "%s" doesn\'t exist.', $jobName));
         }
 
-        if (class_exists($jobName) && (is_a($jobName, Job::class) === false)) {
+        if (class_exists($jobName) && is_subclass_of($jobName, Job::class) === false) {
             throw new InvalidArgumentException(sprintf('Job class "%s" doesn\'t extends "%s".', $jobName, Job::class));
         }
 
-        $message = $this->createMessage('default', $data); // TODO: change default queue
+        $queue = (new $jobName)->queue();
+        // ----------------------------------------------------------------------------------------------
+
+
+        $message = $this->createMessage($queue, $data);
         $message->setEvent($jobName);
 
         $message = (new MessageHydrator($message))->jobable()->getMessage();

@@ -6,6 +6,7 @@ namespace Simple\Queue;
 
 use Exception;
 use DateTimeImmutable;
+use ReflectionProperty;
 use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\Hydrator\Strategy\HydratorStrategy;
 
@@ -42,21 +43,12 @@ class MessageHydrator
     }
 
     /**
+     * @param bool $isJob
      * @return $this
      */
-    public function jobable(): self
+    public function jobable(bool $isJob = true): self
     {
-        $this->message = $this->hydrate(['isJob' => true]);
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function unJobable(): self
-    {
-        $this->message = $this->hydrate(['isJob' => false]);
+        $this->message = $this->hydrate(['isJob' => $isJob]);
 
         return $this;
     }
@@ -83,6 +75,17 @@ class MessageHydrator
     }
 
     /**
+     * @param int $amount
+     * @return $this
+     */
+    public function changeAttempts(int $amount): self
+    {
+        $this->hydrate(['attempts' => $amount]);
+
+        return $this;
+    }
+
+    /**
      * @return Message
      */
     public function getMessage(): Message
@@ -91,15 +94,15 @@ class MessageHydrator
     }
 
     /**
-     * @param array $data
-     * @return Message
+     * @param Message $message
+     * @param string $property
+     * @param $value
      */
-    private function hydrate(array $data): Message
+    public static function changeProperty(Message $message, string $property, $value): void
     {
-        /** @var Message $redeliveredMessage */
-        $redeliveredMessage = (new ReflectionHydrator())->hydrate($data, $this->message);
-
-        return $redeliveredMessage;
+        $r = new ReflectionProperty($message, $property);
+        $r->setAccessible(true);
+        $r->setValue($message, $value);
     }
 
     /**
@@ -129,5 +132,17 @@ class MessageHydrator
         ]));
 
         return $message;
+    }
+
+    /**
+     * @param array $data
+     * @return Message
+     */
+    protected function hydrate(array $data): Message
+    {
+        /** @var Message $redeliveredMessage */
+        $redeliveredMessage = (new ReflectionHydrator())->hydrate($data, $this->message);
+
+        return $redeliveredMessage;
     }
 }
