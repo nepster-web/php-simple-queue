@@ -8,7 +8,7 @@ Demonstration of work PHP Simple Queue using SQLite.
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Send message](./send_message.md)
+* [Producer (Send message)](./producer.md)
 * [Consuming](./consuming.md)
 * **[Example](./example.md)**
 * [Cookbook](./cookbook.md)

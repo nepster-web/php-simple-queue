@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Simple\Queue;
 
-use RuntimeException;
-use InvalidArgumentException;
 use Simple\Queue\Serializer\BaseSerializer;
 use Simple\Queue\Serializer\SerializerInterface;
 
@@ -23,6 +21,9 @@ class Config
 
     /** @var array */
     private array $jobs = [];
+
+    /** @var array */
+    private array $processors = [];
 
     /** @var SerializerInterface|null */
     private ?SerializerInterface $serializer = null;
@@ -62,36 +63,6 @@ class Config
     }
 
     /**
-     * @return array
-     */
-    public function getJobs(): array
-    {
-        return $this->jobs;
-    }
-
-    /**
-     * @param string $key
-     * @return string|null
-     */
-    public function getJob(string $key): ?string
-    {
-        if ($this->hasJob($key) === false) {
-            throw new InvalidArgumentException(sprintf('Job "%s" doesn\'t exists.', $key));
-        }
-
-        return $this->jobs[$key];
-    }
-
-    /**
-     * @param string $key
-     * @return bool
-     */
-    public function hasJob(string $key): bool
-    {
-        return isset($this->jobs[$key]);
-    }
-
-    /**
      * @param int $seconds
      * @return $this
      */
@@ -114,28 +85,6 @@ class Config
     }
 
     /**
-     * @param string $alias
-     * @param string $class
-     * @return $this
-     */
-    public function registerJobAlias(string $alias, string $class): self
-    {
-        if ((bool)preg_match('/^[a-zA-Z0-9_.-]*$/u', $alias) === false) {
-            throw new InvalidArgumentException(sprintf('The job alias "%s" contains invalid characters.', $alias));
-        }
-
-        if (isset($this->jobs[$alias])) {
-            throw new RuntimeException(sprintf('Job "%s" is already registered in the jobs.', $alias));
-        }
-
-        // TODO: job class
-
-        $this->jobs[$alias] = $class;
-
-        return $this;
-    }
-
-    /**
      * @return SerializerInterface
      */
     public function getSerializer(): SerializerInterface
@@ -152,5 +101,142 @@ class Config
         $this->serializer = $serializer;
 
         return $this;
+    }
+
+    /**
+     * @param string $jobName
+     * @param Job $job
+     * @return $this
+     * @throws ConfigException
+     */
+    public function registerJob(string $jobName, Job $job): self
+    {
+        // TODO check if job class has construct params
+
+        if (isset($this->jobs[$jobName])) {
+            throw new ConfigException(sprintf('Job "%s" is already registered.', $jobName));
+        }
+
+        if (class_exists($jobName) === false && (bool)preg_match('/^[a-zA-Z0-9_.-]*$/u', $jobName) === false) {
+            throw new ConfigException(sprintf('Job alias "%s" contains invalid characters.', $jobName));
+        }
+
+        if (class_exists($jobName) && is_subclass_of($jobName, Job::class) === false) {
+            throw new ConfigException(sprintf('Job class "%s" should extends "%s".', $jobName, Job::class));
+        }
+
+        $this->jobs[$jobName] = $job;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getJobs(): array
+    {
+        return $this->jobs;
+    }
+
+    /**
+     * @param string $jobName
+     * @return Job
+     * @throws QueueException
+     */
+    public function getJob(string $jobName): Job
+    {
+        if ($this->hasJob($jobName) === false) {
+            throw new QueueException(sprintf('Job "%s" not registered.', $jobName));
+        }
+
+        if (class_exists($jobName)) {
+            foreach ($this->jobs as $jobAlias => $job) {
+                if (is_a($job, $jobName)) {
+                    return $job;
+                }
+            }
+        }
+
+        return $this->jobs[$jobName];
+    }
+
+    /**
+     * @param string $jobName
+     * @return bool
+     */
+    public function hasJob(string $jobName): bool
+    {
+        if (class_exists($jobName)) {
+            foreach ($this->jobs as $jobAlias => $job) {
+                if (is_a($job, $jobName)) {
+                    return true;
+                }
+            }
+        }
+
+        return isset($this->jobs[$jobName]);
+    }
+
+    /**
+     * @param string $jobName
+     * @return string
+     * @throws QueueException
+     */
+    public function getJobAlias(string $jobName): string
+    {
+        if (isset($this->jobs[$jobName])) {
+            return $jobName;
+        }
+
+        foreach ($this->jobs as $jobAlias => $job) {
+            if (is_a($job, $jobName)) {
+                return $jobAlias;
+            }
+        }
+
+        throw new QueueException(sprintf('Job "%s" not registered.', $jobName));
+    }
+
+    /**
+     * @param string $queue
+     * @param callable $processor
+     * @return $this
+     */
+    public function registerProcessor(string $queue, callable $processor): self
+    {
+        $this->processors[$queue] = $processor;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProcessors(): array
+    {
+        return $this->processors;
+    }
+
+    /**
+     * @param string $queue
+     * @return callable
+     * @throws QueueException
+     */
+    public function getProcessor(string $queue): callable
+    {
+        if ($this->hasProcessor($queue) === false) {
+            throw new QueueException(sprintf('Processor "%s" not registered.', $queue));
+        }
+
+        return $this->processors[$queue];
+    }
+
+    /**
+     * @param string $queue
+     * @return bool
+     */
+    public function hasProcessor(string $queue): bool
+    {
+        return isset($this->processors[$queue]);
     }
 }

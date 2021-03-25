@@ -10,20 +10,20 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'path' => '/db/queue.db',
 ]);
 
-$tableCreator = new \Simple\Queue\QueueTableCreator($connection);
+$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
 
-$producer = new \Simple\Queue\Producer($connection);
-$consumer = new \Simple\Queue\Consumer($connection, $producer);
+$producer = new \Simple\Queue\Producer($store);
+$consumer = new \Simple\Queue\Consumer($store, $producer);
 
 // create table for queue messages
-$tableCreator->createDataBaseTable();
+$store->init();
 
 
 echo 'Start consuming' . PHP_EOL;
 
 while (true) {
 
-    if ($message = $consumer->fetchMessage(['my_queue'])) {
+    if ($message = $store->fetchMessage(['my_queue'])) {
 
         // Your message handling logic
 

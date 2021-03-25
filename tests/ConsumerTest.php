@@ -140,7 +140,7 @@ class ConsumerTest extends TestCase
         $consumer = new class(new MockConnection(), new Producer(new MockConnection()), $config) extends Consumer {
             public function publicForRedeliveryMessage(Message $message): Message
             {
-                return $this->forRedeliveryMessage($message);
+                return $this->makeRedeliveryMessage($message);
             }
         };
 

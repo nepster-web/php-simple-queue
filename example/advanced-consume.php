@@ -14,8 +14,10 @@ $config = \Simple\Queue\Config::getDefault()
     ->changeRedeliveryTimeInSeconds(100)
     ->changeNumberOfAttemptsBeforeFailure(3);
 
-$producer = new \Simple\Queue\Producer($connection, $config);
-$consumer = new \Simple\Queue\Consumer($connection, $producer, $config);
+$store = new \Simple\Queue\Store\DoctrineDbalStore($connection, $config);
+
+$producer = new \Simple\Queue\Producer($store, $config);
+$consumer = new \Simple\Queue\Consumer($store, $producer, $config);
 
 
 echo 'Start consuming' . PHP_EOL;

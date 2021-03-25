@@ -8,7 +8,7 @@ An example of using this library.
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Send message](./send_message.md)
+* [Producer (Send message)](./producer.md)
 * **[Consuming](./consuming.md)**
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
@@ -47,8 +47,10 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'path' => '/db/queue.db'
 ]);
 
-$producer = new \Simple\Queue\Producer($connection);
-$consumer = new \Simple\Queue\Consumer($connection, $producer);
+$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
+
+$producer = new \Simple\Queue\Producer($store);
+$consumer = new \Simple\Queue\Consumer($store, $producer);
 
 echo 'Start consuming' . PHP_EOL;
 
@@ -79,7 +81,7 @@ if there are no messages, there will be a sustained seconds pause.
 
 When the message is received, it will be processed. Job has priority over the processor.
 
-If an uncaught error occurs, it will be caught and increment first processing attempt. 
+If an uncaught error occurs, it will be caught and increment first processing attempt.
 
 After several unsuccessful attempts, the message will status `\Simple\Queue\Status::FAILURE`.
 
@@ -108,20 +110,19 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'path' => '/db/queue.db'
 ]);
 
-$tableCreator = new \Simple\Queue\QueueTableCreator($connection);
+$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
 
-$producer = new \Simple\Queue\Producer($connection);
-$consumer = new \Simple\Queue\Consumer($connection, $producer);
+$producer = new \Simple\Queue\Producer($store);
+$consumer = new \Simple\Queue\Consumer($store, $producer);
 
 // create table for queue messages
-$tableCreator->createDataBaseTable();
-
+$store->init();
 
 echo 'Start consuming' . PHP_EOL;
 
 while (true) {
 
-    if ($message = $consumer->fetchMessage(['my_queue'])) {
+    if ($message = $store->fetchMessage(['my_queue'])) {
 
         // Your message handling logic
 

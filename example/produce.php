@@ -9,7 +9,9 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'path' => '/db/queue.db'
 ]);
 
-$producer = new \Simple\Queue\Producer($connection, null);
+$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
+
+$producer = new \Simple\Queue\Producer($store, null);
 
 
 echo 'Start send to queue' . PHP_EOL;
