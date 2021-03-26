@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Simple\Queue\Store;
 
-use Simple\Queue\Message;
 use Simple\Queue\Status;
+use Simple\Queue\Message;
 
 /**
  * Interface StoreInterface

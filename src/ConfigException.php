@@ -10,5 +10,4 @@ namespace Simple\Queue;
  */
 class ConfigException extends QueueException
 {
-
 }

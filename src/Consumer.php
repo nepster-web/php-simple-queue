@@ -114,29 +114,27 @@ class Consumer
 
         if ($message->isJob()) {
             try {
-
                 $job = $this->config->getJob($message->getEvent());
 
                 $result = $job->handle($message, $this->producer);
 
                 $this->processSuccessResult($result, $message);
-
             } catch (Throwable $exception) {
                 $this->processFailureResult($exception, $message);
             }
+
             return;
         }
 
         if ($this->config->hasProcessor($message->getQueue())) {
             try {
-
                 $result = $this->config->getProcessor($message->getQueue())($message, $this->producer);
 
                 $this->processSuccessResult($result, $message);
-
             } catch (Throwable $exception) {
                 $this->processFailureResult($exception, $message);
             }
+
             return;
         }
 

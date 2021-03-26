@@ -7,6 +7,7 @@ namespace Simple\Queue;
 use Exception;
 use DateTimeImmutable;
 use ReflectionProperty;
+use ReflectionException;
 use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\Hydrator\Strategy\HydratorStrategy;
 
@@ -97,6 +98,7 @@ class MessageHydrator
      * @param Message $message
      * @param string $property
      * @param $value
+     * @throws ReflectionException
      */
     public static function changeProperty(Message $message, string $property, $value): void
     {

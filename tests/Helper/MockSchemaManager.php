@@ -41,6 +41,7 @@ class MockSchemaManager extends AbstractSchemaManager
      */
     public function createTable(Table $table): void
     {
+        self::$data['createTable'] = $table;
     }
 
     /**

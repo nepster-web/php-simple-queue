@@ -12,5 +12,4 @@ use Simple\Queue\QueueException;
  */
 class StoreException extends QueueException
 {
-
 }

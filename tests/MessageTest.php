@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest;
 
-use LogicException;
 use DateTimeImmutable;
 use Simple\Queue\Status;
 use Simple\Queue\Message;
 use Simple\Queue\Priority;
 use PHPUnit\Framework\TestCase;
+use Simple\Queue\QueueException;
 use Simple\Queue\MessageHydrator;
 
 /**
@@ -26,7 +26,7 @@ class MessageTest extends TestCase
         $message = new Message('my_queue', $body);
 
 
-        $this->expectException(LogicException::class);
+        $this->expectException(QueueException::class);
         $this->expectExceptionMessage('The message has no id. It looks like it was not sent to the queue.');
         $message->getId();
 

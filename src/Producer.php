@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Simple\Queue;
 
 use DateTimeImmutable;
-use InvalidArgumentException;
 use Simple\Queue\Store\StoreInterface;
 
 /**
@@ -40,11 +39,12 @@ class Producer
      * @param string $queue
      * @param $body
      * @return Message
+     * @throws QueueException
      */
     public function createMessage(string $queue, $body): Message
     {
         if (is_callable($body)) {
-            throw new InvalidArgumentException('The closure cannot be serialized.');
+            throw new QueueException('The closure cannot be serialized.');
         }
 
         if (is_object($body) && method_exists($body, '__toString')) {
@@ -60,12 +60,6 @@ class Producer
 
     /**
      * Redelivered a message to the queue
-     *
-     * TODO: add test for is job
-     * TODO: add test for set error
-     * TODO: add test for change status
-     * TODO: add test for correct increase attempt
-     * TODO: add test for count job attempts
      *
      * @param Message $message
      * @return Message
@@ -108,6 +102,7 @@ class Producer
      *
      * @param string $jobName
      * @param array $data
+     * @throws QueueException
      */
     public function dispatch(string $jobName, array $data): void
     {

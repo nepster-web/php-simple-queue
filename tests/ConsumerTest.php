@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Simple\QueueTest;
 
 use DateTimeImmutable;
-use ReflectionProperty;
 use Simple\Queue\Config;
 use Simple\Queue\Status;
 use Simple\Queue\Message;
 use Simple\Queue\Consumer;
 use Simple\Queue\Producer;
-use Doctrine\DBAL\Types\Types;
 use PHPUnit\Framework\TestCase;
+use Simple\Queue\MessageHydrator;
+use Simple\Queue\Store\DoctrineDbalStore;
 use Simple\QueueTest\Helper\MockConnection;
 
 /**
@@ -23,32 +23,41 @@ class ConsumerTest extends TestCase
 {
     public function testAcknowledge(): void
     {
+        $id = '71a384ad-952d-417f-9dc5-dfdb5b01704d';
         $message = new Message('my_queue', 'my_data');
 
-        $this->setMessageId($message, '71a384ad-952d-417f-9dc5-dfdb5b01704d');
+        MessageHydrator::changeProperty($message, 'id', $id);
 
-        $consumer = new class(new MockConnection(), new Producer(new MockConnection())) extends Consumer {
+        $store = new class(new MockConnection()) extends DoctrineDbalStore {
             public static string $deleteMessageId;
 
-            protected function deleteMessage(string $id): void
+            public function deleteMessage(Message $message): void
             {
-                self::$deleteMessageId = $id;
+                self::$deleteMessageId = $message->getId();
             }
         };
 
+        $consumer = new Consumer($store, new Producer($store));
         $consumer->acknowledge($message);
 
-        self::assertEquals('71a384ad-952d-417f-9dc5-dfdb5b01704d', $consumer::$deleteMessageId);
+        self::assertEquals($id, $store::$deleteMessageId);
     }
 
     public function testRejectWithRequeue(): void
     {
+        $id = '71a384ad-952d-417f-9dc5-dfdb5b01704d';
         $message = new Message('my_queue', 'my_data');
 
-        $this->setMessageId($message, '71a384ad-952d-417f-9dc5-dfdb5b01704d');
+        MessageHydrator::changeProperty($message, 'id', $id);
 
-        $config = new Config();
-        $producer = new class(new MockConnection()) extends Producer {
+        $store = new class(new MockConnection()) extends DoctrineDbalStore {
+            public static string $deleteMessageId;
+
+            public function deleteMessage(Message $message): void
+            {
+                self::$deleteMessageId = $message->getId();
+            }
+
             public static Message $message;
 
             public function send(Message $message): void
@@ -57,116 +66,41 @@ class ConsumerTest extends TestCase
             }
         };
 
-        $consumer = new class(new MockConnection(), $producer) extends Consumer {
-            public static string $deleteMessageId;
+        $producer = new Producer($store);
 
-            protected function deleteMessage(string $id): void
-            {
-                self::$deleteMessageId = $id;
-            }
-        };
-
+        $consumer = new Consumer($store, $producer);
         $consumer->reject($message, true);
 
-        self::assertEquals('71a384ad-952d-417f-9dc5-dfdb5b01704d', $consumer::$deleteMessageId);
+        self::assertEquals($id, $store::$deleteMessageId);
 
-        self::assertEquals(Status::REDELIVERED, $producer::$message->getStatus());
+        self::assertEquals(Status::REDELIVERED, $store::$message->getStatus());
         self::assertEquals(
             (new DateTimeImmutable())
-                ->modify(sprintf('+%s seconds', $config->getRedeliveryTimeInSeconds()))
+                ->modify(sprintf('+%s seconds', Config::getDefault()->getRedeliveryTimeInSeconds()))
                 ->format('Y-m-d H:i:s'),
-            $producer::$message->getRedeliveredAt()->format('Y-m-d H:i:s')
+            $store::$message->getRedeliveredAt()->format('Y-m-d H:i:s')
         );
     }
 
     public function testRejectWithoutRequeue(): void
     {
+        $id = '71a384ad-952d-417f-9dc5-dfdb5b01704d';
         $message = new Message('my_queue', 'my_data');
 
-        $this->setMessageId($message, '71a384ad-952d-417f-9dc5-dfdb5b01704d');
+        MessageHydrator::changeProperty($message, 'id', $id);
 
-        $consumer = new class(new MockConnection(), new Producer(new MockConnection())) extends Consumer {
+        $store = new class(new MockConnection()) extends DoctrineDbalStore {
             public static string $deleteMessageId;
 
-            protected function deleteMessage(string $id): void
+            public function deleteMessage(Message $message): void
             {
-                self::$deleteMessageId = $id;
+                self::$deleteMessageId = $message->getId();
             }
         };
 
+        $consumer = new Consumer($store, new Producer($store));
         $consumer->reject($message);
 
-        self::assertEquals('71a384ad-952d-417f-9dc5-dfdb5b01704d', $consumer::$deleteMessageId);
-    }
-
-    public function testDeleteMessage(): void
-    {
-        $connection = new class extends MockConnection {
-            public function delete($table, array $criteria, array $types = []): int
-            {
-                self::$data['delete'] = [$table, $criteria, $types];
-
-                return 1;
-            }
-        };
-
-        $consumer = new class($connection, new Producer($connection)) extends Consumer {
-            public function publicDeleteMessage(string $id): void
-            {
-                $this->deleteMessage($id);
-            }
-        };
-
-        $consumer->publicDeleteMessage('6a4f09d6-eac6-45f1-80a1-cefde30b43d2');
-
-        self::assertEquals([
-            'delete' => [
-                'queue',
-                [
-                    'id' => '6a4f09d6-eac6-45f1-80a1-cefde30b43d2',
-                ],
-                [
-                    'id' => Types::GUID
-                ]
-            ],
-        ], $connection::$data);
-    }
-
-    public function testRedeliveredMessage(): void
-    {
-        $message = new Message('my_queue', 'my_data');
-
-        $config = new Config();
-        $consumer = new class(new MockConnection(), new Producer(new MockConnection()), $config) extends Consumer {
-            public function publicForRedeliveryMessage(Message $message): Message
-            {
-                return $this->makeRedeliveryMessage($message);
-            }
-        };
-
-        $newMessage = $consumer->publicForRedeliveryMessage($message);
-
-        self::assertEquals(Status::NEW, $message->getStatus());
-        self::assertNull($message->getRedeliveredAt());
-
-        self::assertEquals(Status::REDELIVERED, $newMessage->getStatus());
-        self::assertEquals(
-            (new DateTimeImmutable())
-                ->modify(sprintf('+%s seconds', $config->getRedeliveryTimeInSeconds()))
-                ->format('Y-m-d H:i:s'),
-            $newMessage->getRedeliveredAt()->format('Y-m-d H:i:s')
-        );
-    }
-
-    /**
-     * @param Message $message
-     * @param string $id
-     * @throws \ReflectionException
-     */
-    private function setMessageId(Message $message, string $id): void
-    {
-        $reflection = new ReflectionProperty(get_class($message), 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($message, $id);
+        self::assertEquals($id, $store::$deleteMessageId);
     }
 }

@@ -47,6 +47,7 @@
   "scripts": {
     "code-style-check": "php vendor/bin/php-cs-fixer fix --verbose --show-progress=dots --dry-run --config=.php_cs.php",
     "code-style-fix": "php vendor/bin/php-cs-fixer fix --diff --config=.php_cs.php",
-    "test": "php vendor/bin/phpunit --colors=always"
+    "test": "php vendor/bin/phpunit --colors=always",
+    "test-coverage": "php vendor/bin/phpunit --coverage-text --coverage-html ./docs/tmp/"
   }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Simple\Queue;
 
-use LogicException;
 use DateTimeImmutable;
 
 /**
@@ -114,11 +113,12 @@ class Message
 
     /**
      * @return string
+     * @throws QueueException
      */
     public function getId(): string
     {
         if ($this->id === null) {
-            throw new LogicException('The message has no id. It looks like it was not sent to the queue.');
+            throw new QueueException('The message has no id. It looks like it was not sent to the queue.');
         }
 
         return $this->id;

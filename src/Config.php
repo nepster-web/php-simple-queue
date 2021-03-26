@@ -111,18 +111,12 @@ class Config
      */
     public function registerJob(string $jobName, Job $job): self
     {
-        // TODO check if job class has construct params
-
         if (isset($this->jobs[$jobName])) {
             throw new ConfigException(sprintf('Job "%s" is already registered.', $jobName));
         }
 
         if (class_exists($jobName) === false && (bool)preg_match('/^[a-zA-Z0-9_.-]*$/u', $jobName) === false) {
             throw new ConfigException(sprintf('Job alias "%s" contains invalid characters.', $jobName));
-        }
-
-        if (class_exists($jobName) && is_subclass_of($jobName, Job::class) === false) {
-            throw new ConfigException(sprintf('Job class "%s" should extends "%s".', $jobName, Job::class));
         }
 
         $this->jobs[$jobName] = $job;
@@ -180,7 +174,7 @@ class Config
     /**
      * @param string $jobName
      * @return string
-     * @throws QueueException
+     * @throws ConfigException
      */
     public function getJobAlias(string $jobName): string
     {
@@ -194,16 +188,21 @@ class Config
             }
         }
 
-        throw new QueueException(sprintf('Job "%s" not registered.', $jobName));
+        throw new ConfigException(sprintf('Job "%s" not registered.', $jobName));
     }
 
     /**
      * @param string $queue
      * @param callable $processor
      * @return $this
+     * @throws ConfigException
      */
     public function registerProcessor(string $queue, callable $processor): self
     {
+        if ($this->hasProcessor($queue)) {
+            throw new ConfigException(sprintf('Processor "%s" is already registered.', $queue));
+        }
+
         $this->processors[$queue] = $processor;
 
         return $this;
@@ -220,12 +219,12 @@ class Config
     /**
      * @param string $queue
      * @return callable
-     * @throws QueueException
+     * @throws ConfigException
      */
     public function getProcessor(string $queue): callable
     {
         if ($this->hasProcessor($queue) === false) {
-            throw new QueueException(sprintf('Processor "%s" not registered.', $queue));
+            throw new ConfigException(sprintf('Processor "%s" not registered.', $queue));
         }
 
         return $this->processors[$queue];

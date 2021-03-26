@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Simple\Queue\Store;
 
+use Throwable;
+use Ramsey\Uuid\Uuid;
 use DateTimeImmutable;
+use Simple\Queue\Config;
+use Simple\Queue\Status;
+use Simple\Queue\Message;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
-use Ramsey\Uuid\Uuid;
-use Simple\Queue\Config;
-use Simple\Queue\Message;
 use Simple\Queue\MessageHydrator;
-use Simple\Queue\Status;
-use Throwable;
 
 /**
  * Class DoctrineDbalStore
@@ -139,10 +139,6 @@ class DoctrineDbalStore implements StoreInterface
      */
     public function changeMessageStatus(Message $message, Status $status): void
     {
-        if (empty($message->getId())) {
-            throw new StoreException('The expected message has no identifier for changing status in queue.');
-        }
-
         $this->connection->update(
             DoctrineDbalTableCreator::getTableName(),
             ['status' => (string)$status],
@@ -158,10 +154,6 @@ class DoctrineDbalStore implements StoreInterface
      */
     public function deleteMessage(Message $message): void
     {
-        if (empty($message->getId())) {
-            throw new StoreException('The expected message has no identifier for removing from queue.');
-        }
-
         $this->connection->delete(
             DoctrineDbalTableCreator::getTableName(),
             ['id' => $message->getId()],
