@@ -86,8 +86,8 @@ class Producer
 
         $redeliveredMessage = (new Message($message->getQueue(), $message->getBody()))
             ->changePriority($message->getPriority())
-            ->setEvent($message->getEvent())
-            ->setRedeliveredAt($redeliveredTime);
+            ->withEvent($message->getEvent())
+            ->changeRedeliveredAt($redeliveredTime);
 
         return (new MessageHydrator($redeliveredMessage))
             ->changeStatus($newStatus)
@@ -109,7 +109,7 @@ class Producer
         $job = $this->config->getJob($jobName);
 
         $message = $this->createMessage($job->queue(), $data)
-            ->setEvent($this->config->getJobAlias($jobName));
+            ->withEvent($this->config->getJobAlias($jobName));
 
         $message = (new MessageHydrator($message))->jobable()->getMessage();
 

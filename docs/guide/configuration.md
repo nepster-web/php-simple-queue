@@ -19,14 +19,19 @@ An example of using this library.
 
 ## :page_facing_up: Configuration
 
+You need to use the same config for producer and consumer.
+
+<br>
+
 **Create config:**
 
-You need to use the same config for producer and consumer, for example:
+Detailed example:
 
 ```php
 $config = \Simple\Queue\Config::getDefault()
     ->changeRedeliveryTimeInSeconds(100)
     ->changeNumberOfAttemptsBeforeFailure(3)
+    ->withSerializer(new \Simple\Queue\Serializer\BaseSerializer())
     ->registerJob(MyJob::class, new MyJob())
     ->registerProcessor('my_queue', static function(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string {
    

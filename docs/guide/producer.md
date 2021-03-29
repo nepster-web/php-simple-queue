@@ -21,9 +21,9 @@ An example of using this library.
 
 You need to configure [$store](./store.md) and [$config](./configuration.md) to send new messages.
 
+<br>
 
-
-**Send a message to queue:**
+**Send a new message to queue:**
 -------------------------------
 
 ```php
@@ -38,7 +38,7 @@ or a custom example (you need to think about serialization):
 $producer = new \Simple\Queue\Producer($store, $config);
 
 $message = (new \Simple\Queue\Message('my_queue', 'my_data'))
-    ->setEvent('my_event')
+    ->withEvent('my_event')
     ->changePriority(\Simple\Queue\Priority::VERY_HIGH);
 
 $producer->send($message);
@@ -48,7 +48,7 @@ You can send a message from anywhere in the application to process it in the bac
 
 <br>
 
-**Send a message to queue through job:**
+**Send a new message to queue through job:**
 -------------------------------
 
 ```php
@@ -89,10 +89,10 @@ $message->getRedeliveredAt();
 $message->isRedelivered();
 
 // public setters
-$message->setRedeliveredAt($redeliveredAt);
+$message->changeRedeliveredAt($redeliveredAt);
 $message->changeQueue($queue);
 $message->changePriority($priority);
-$message->setEvent($event);
+$message->withEvent($event);
 ```
 
 Each message has [Status](../../src/Status.php) and [Priority](../../src/Priority.php).

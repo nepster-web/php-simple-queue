@@ -228,7 +228,7 @@ class Message
      * @param DateTimeImmutable|null $redeliveredAt
      * @return $this
      */
-    public function setRedeliveredAt(?DateTimeImmutable $redeliveredAt): self
+    public function changeRedeliveredAt(?DateTimeImmutable $redeliveredAt): self
     {
         $this->redeliveredAt = $redeliveredAt;
 
@@ -261,7 +261,7 @@ class Message
      * @param string|null $event
      * @return $this
      */
-    public function setEvent(?string $event): self
+    public function withEvent(?string $event): self
     {
         $this->event = $event;
 

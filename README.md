@@ -68,7 +68,7 @@ $store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
 ```
 
 
-Create configuration:
+Create configuration ([see more information](./docs/guide/configuration.md)):
 
 ```php
 $config = \Simple\Queue\Config::getDefault()

@@ -210,7 +210,7 @@ class ProducerTest extends TestCase
 
         $redeliveredAt = (new \DateTimeImmutable())->modify('-10 minutes');
 
-        $message = (new Message('my_queue', ''))->setRedeliveredAt($redeliveredAt);
+        $message = (new Message('my_queue', ''))->changeRedeliveredAt($redeliveredAt);
 
         $redeliveryMessage = (new Producer($store))->makeRedeliveryMessage($message);
 
@@ -231,7 +231,7 @@ class ProducerTest extends TestCase
 
         $redeliveredAt = (new \DateTimeImmutable())->modify('+10 minutes');
 
-        $message = (new Message('my_queue', ''))->setRedeliveredAt($redeliveredAt);
+        $message = (new Message('my_queue', ''))->changeRedeliveredAt($redeliveredAt);
 
         $redeliveryMessage = (new Producer($store))->makeRedeliveryMessage($message);
 

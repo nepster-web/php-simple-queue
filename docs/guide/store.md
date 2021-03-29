@@ -22,6 +22,7 @@ An example of using this library.
 It is necessary to organize sending and receiving messages from the store.
 Currently only supported [Doctrine DBAL](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/) connection.
 
+<br>
 
 **Create connection:**
 
@@ -49,6 +50,7 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
 
 [See more information.](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html)
 
+<br>
 
 **Create store:**
 

@@ -50,8 +50,8 @@ class MessageTest extends TestCase
         $time = time();
         $message = (new Message('my_queue', $body))
             ->changePriority(Priority::LOW)
-            ->setEvent('my_event')
-            ->setRedeliveredAt(new DateTimeImmutable());
+            ->withEvent('my_event')
+            ->changeRedeliveredAt(new DateTimeImmutable());
 
         self::assertEquals(0, $message->getAttempts());
         self::assertEquals('my_queue', $message->getQueue());
@@ -81,7 +81,7 @@ class MessageTest extends TestCase
     public function testSetEvent(): void
     {
         $message = new Message('my_queue', '');
-        $message->setEvent('my_event');
+        $message->withEvent('my_event');
 
         self::assertEquals('my_event', $message->getEvent());
     }
@@ -91,7 +91,7 @@ class MessageTest extends TestCase
         $redelivered = new DateTimeImmutable();
 
         $message = new Message('my_queue', '');
-        $message->setRedeliveredAt($redelivered);
+        $message->changeRedeliveredAt($redelivered);
 
         self::assertTrue($message->isRedelivered());
         self::assertEquals($redelivered->format('Y-m-d H:i:s'), $message->getRedeliveredAt()->format('Y-m-d H:i:s'));
