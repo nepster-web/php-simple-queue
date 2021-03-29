@@ -8,6 +8,7 @@ An example of using this library.
 
 * [Guide](./README.md)
 * [Install](./install.md)
+* [Store](./store.md)
 * [Configuration](./configuration.md)
 * **[Producer (Send message)](./producer.md)**
 * [Consuming](./consuming.md)
@@ -18,12 +19,20 @@ An example of using this library.
 
 ## :page_facing_up: Producer
 
-You need to configure `$store` and `$config` to send new messages.
-[Detailed information](./configuration.md).
+You need to configure [$store](./store.md) and [$config](./configuration.md) to send new messages.
+
 
 
 **Send a message to queue:**
 -------------------------------
+
+```php
+$producer = new \Simple\Queue\Producer($store, $config);
+
+$producer->send($producer->createMessage('my_queue', ['my_data']));
+```
+
+or a custom example (you need to think about serialization):
 
 ```php
 $producer = new \Simple\Queue\Producer($store, $config);
@@ -33,14 +42,6 @@ $message = (new \Simple\Queue\Message('my_queue', 'my_data'))
     ->changePriority(\Simple\Queue\Priority::VERY_HIGH);
 
 $producer->send($message);
-```
-
-or a simpler example:
-
-```php
-$producer = new \Simple\Queue\Producer($store, $config);
-
-$producer->send($producer->createMessage('my_queue', ['my_data']));
 ```
 
 You can send a message from anywhere in the application to process it in the background. 

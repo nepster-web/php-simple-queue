@@ -8,6 +8,7 @@ An example of using this library.
 
 * [Guide](./README.md)
 * [Install](./install.md)
+* [Store](./store.md)
 * [Configuration](./configuration.md)
 * [Producer (Send message)](./producer.md)
 * **[Consuming](./consuming.md)**
@@ -18,7 +19,7 @@ An example of using this library.
 
 ## Consuming
 
-You need to configure `$store` and `$config` to read and processing messages from the queue.
+You need to configure [$store](./store.md) and [$config](./configuration.md) to read and processing messages from the queue.
 [Detailed information](./configuration.md).
 
 You can use a simple php cli, [Symfony/Console](https://symfony.com/doc/current/components/console.html)

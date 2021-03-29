@@ -52,7 +52,7 @@ or add
 :computer: Basic Usage
 ----------------------
 
-Create a database connection and store ([See more information](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html)):
+Create a database connection and store ([see more information](./docs/guide/configuration.md)):
 
 ```php
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
