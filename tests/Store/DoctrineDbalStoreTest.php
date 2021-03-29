@@ -35,7 +35,7 @@ class DoctrineDbalStoreTest extends TestCase
     }
 
     // TODO:
-    public function testSend(): void
+    /*public function testSend(): void
     {
         $connection = new MockConnection();
         $store = new DoctrineDbalStore($connection);
@@ -60,8 +60,8 @@ class DoctrineDbalStoreTest extends TestCase
             'error' => Types::TEXT,
             'exact_time' => Types::BIGINT,
             'is_job' => Types::BOOLEAN,
-        ], ($connection::$data)['insert'][2]);*/
-    }
+        ], ($connection::$data)['insert'][2]);*//*
+    }*/
 
     /*public function testFetchMessage(): void
     {
