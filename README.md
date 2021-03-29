@@ -52,7 +52,7 @@ or add
 :computer: Basic Usage
 ----------------------
 
-Create a database connection and store ([see more information](./docs/guide/configuration.md)):
+Create storage connection and store ([see more information](./docs/guide/store.md)):
 
 ```php
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
