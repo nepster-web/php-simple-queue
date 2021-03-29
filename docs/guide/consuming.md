@@ -54,6 +54,16 @@ $consumer->consume();
 
 <br>
 
+**Job processing:**
+-------------------------------
+
+```php
+<?php
+    //
+```
+
+
+<br>
 
 **Consuming algorithm:**
 -------------------------------

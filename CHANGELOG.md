@@ -4,7 +4,7 @@ PHP Simple Queue Change Log
 A changelog of all notable changes made to this library.
 
 - *ENH*: Enhance or modify
-- *FIX*: fix error or a small change
+- *FIX*: Fix error or a small change
 
 
 1.0.0 under development

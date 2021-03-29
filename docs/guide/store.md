@@ -43,7 +43,7 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'user' => 'root',
     'password' => '*******',
     'host' => 'localhost',
-    'port' => '54320',
+    'port' => '5432',
     'driver' => 'pdo_pgsql',
 ]);
 ```
