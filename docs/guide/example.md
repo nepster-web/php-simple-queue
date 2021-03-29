@@ -44,9 +44,11 @@ Advanced example of processing messages from a queue: [advanced-consume.php](../
 
 **PHP command access:**
 
-- `make php cmd='-v'`:
+- `make php cmd='{you_command}'`:
+- Example: `make php cmd='-v'`:
 
 <br>
 
 **Composer command access:**
-- `make composer cmd='update'`:
+- `make composer cmd='{you_command}'`:
+- Example: - `make composer cmd='update'`:
