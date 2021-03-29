@@ -8,6 +8,7 @@ Tips, recommendations and best practices for use this library.
 
 * [Guide](./README.md)
 * [Install](./install.md)
+* [Configuration](./configuration.md)
 * [Producer (Send message)](./producer.md)
 * [Consuming](./consuming.md)
 * [Example](./example.md)

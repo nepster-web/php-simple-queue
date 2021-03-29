@@ -52,7 +52,7 @@ or add
 :computer: Basic Usage
 ----------------------
 
-Create a database connection and store ([See more information.](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html)):
+Create a database connection and store ([See more information](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html)):
 
 ```php
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
@@ -83,7 +83,7 @@ $config = \Simple\Queue\Config::getDefault()
     });
 ```
 
-### Send a message to queue (producing)
+### Send a new message to queue (producing)
 
 ```php
 $producer = new \Simple\Queue\Producer($store, $config);
