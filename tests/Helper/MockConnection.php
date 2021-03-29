@@ -43,11 +43,46 @@ class MockConnection extends Connection
      */
     public function insert($table, array $data, array $types = []): int
     {
+        self::$data['insert'] = [
+            'table' => $table,
+            'data' => $data,
+            'types' => $types,
+        ];
+
         return 0;
     }
 
     /**
      * @inheritDoc
+     */
+    public function update($table, array $data, array $criteria, array $types = []): int
+    {
+        self::$data['update'] = [
+            'table' => $table,
+            'data' => $data,
+            'criteria' => $criteria,
+            'types' => $types,
+        ];
+
+        return 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete($table, array $criteria, array $types = []): int
+    {
+        self::$data['delete'] = [
+            'table' => $table,
+            'criteria' => $criteria,
+            'types' => $types,
+        ];
+
+        return 0;
+    }
+
+    /**
+     * @return AbstractSchemaManager|MockSchemaManager
      */
     public function getSchemaManager(): AbstractSchemaManager
     {

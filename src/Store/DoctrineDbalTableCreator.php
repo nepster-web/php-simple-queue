@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Simple\Queue;
+namespace Simple\Queue\Store;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\DBAL\Schema\Table;
 
 /**
- * Class QueueTableCreator
- * @package Simple\Queue
+ * Class DoctrineDbalTableCreator
+ * @package Simple\Queue\Store
  */
-class QueueTableCreator
+class DoctrineDbalTableCreator
 {
     /** @var Connection */
     protected Connection $connection;

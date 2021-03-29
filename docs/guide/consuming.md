@@ -8,7 +8,9 @@ An example of using this library.
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Send message](./send_message.md)
+* [Store](./store.md)
+* [Configuration](./configuration.md)
+* [Producer (Send message)](./producer.md)
 * **[Consuming](./consuming.md)**
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
@@ -17,7 +19,8 @@ An example of using this library.
 
 ## Consuming
 
-You need to configure [Consumer](./../../src/Consumer.php) to read and processing messages from the queue.
+You need to configure [$store](./store.md) and [$config](./configuration.md) to read and processing messages from the queue.
+[Detailed information](./configuration.md).
 
 You can use a simple php cli, [Symfony/Console](https://symfony.com/doc/current/components/console.html)
 or any other component, it really doesn't matter.
@@ -41,25 +44,10 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
-
-$connection = \Doctrine\DBAL\DriverManager::getConnection([
-    'driver' => 'pdo_sqlite',
-    'path' => '/db/queue.db'
-]);
-
-$producer = new \Simple\Queue\Producer($connection);
-$consumer = new \Simple\Queue\Consumer($connection, $producer);
+$producer = new \Simple\Queue\Producer($store, $config);
+$consumer = new \Simple\Queue\Consumer($store, $producer, $config);
 
 echo 'Start consuming' . PHP_EOL;
-
-// register process for processing all messages for "my_queue"
-$consumer->bind('my_queue', static function(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string {
-
-    // Your message handling logic
-    var_dump($message->getBody() . PHP_EOL);
-
-    return \Simple\Queue\Consumer::STATUS_ACK;
-});
 
 $consumer->consume();
 ```
@@ -79,7 +67,7 @@ if there are no messages, there will be a sustained seconds pause.
 
 When the message is received, it will be processed. Job has priority over the processor.
 
-If an uncaught error occurs, it will be caught and increment first processing attempt. 
+If an uncaught error occurs, it will be caught and increment first processing attempt.
 
 After several unsuccessful attempts, the message will status `\Simple\Queue\Status::FAILURE`.
 
@@ -102,26 +90,17 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
-
-$connection = \Doctrine\DBAL\DriverManager::getConnection([
-    'driver' => 'pdo_sqlite',
-    'path' => '/db/queue.db'
-]);
-
-$tableCreator = new \Simple\Queue\QueueTableCreator($connection);
-
-$producer = new \Simple\Queue\Producer($connection);
-$consumer = new \Simple\Queue\Consumer($connection, $producer);
+$producer = new \Simple\Queue\Producer($store, $config);
+$consumer = new \Simple\Queue\Consumer($store, $producer, $config);
 
 // create table for queue messages
-$tableCreator->createDataBaseTable();
-
+$store->init();
 
 echo 'Start consuming' . PHP_EOL;
 
 while (true) {
 
-    if ($message = $consumer->fetchMessage(['my_queue'])) {
+    if ($message = $store->fetchMessage(['my_queue'])) {
 
         // Your message handling logic
 

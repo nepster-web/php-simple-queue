@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Simple\Queue;
 
-use LogicException;
 use DateTimeImmutable;
 
 /**
@@ -114,11 +113,12 @@ class Message
 
     /**
      * @return string
+     * @throws QueueException
      */
     public function getId(): string
     {
         if ($this->id === null) {
-            throw new LogicException('The message has no id. It looks like it was not sent to the queue.');
+            throw new QueueException('The message has no id. It looks like it was not sent to the queue.');
         }
 
         return $this->id;
@@ -228,7 +228,7 @@ class Message
      * @param DateTimeImmutable|null $redeliveredAt
      * @return $this
      */
-    public function setRedeliveredAt(?DateTimeImmutable $redeliveredAt): self
+    public function changeRedeliveredAt(?DateTimeImmutable $redeliveredAt): self
     {
         $this->redeliveredAt = $redeliveredAt;
 
@@ -261,7 +261,7 @@ class Message
      * @param string|null $event
      * @return $this
      */
-    public function setEvent(?string $event): self
+    public function withEvent(?string $event): self
     {
         $this->event = $event;
 

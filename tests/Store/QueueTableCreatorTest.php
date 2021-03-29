@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Simple\QueueTest;
+namespace Simple\QueueTest\Store;
 
 use Doctrine\DBAL\Schema\Table;
 use PHPUnit\Framework\TestCase;
 use Doctrine\DBAL\Schema\Column;
-use Simple\Queue\QueueTableCreator;
 use Simple\QueueTest\Helper\MockConnection;
 use Simple\QueueTest\Helper\MockSchemaManager;
+use Simple\Queue\Store\DoctrineDbalTableCreator;
 
 /**
  * Class QueueTableCreatorTest
- * @package Simple\QueueTest
+ * @package Simple\QueueTest\Store
  */
 class QueueTableCreatorTest extends TestCase
 {
     public function testChangeTableName(): void
     {
-        QueueTableCreator::changeTableName('my_table');
+        DoctrineDbalTableCreator::changeTableName('my_table');
 
-        self::assertEquals('my_table', QueueTableCreator::getTableName());
+        self::assertEquals('my_table', DoctrineDbalTableCreator::getTableName());
     }
 
     public function testSimulateTableCreation(): void
@@ -36,7 +36,7 @@ class QueueTableCreatorTest extends TestCase
         };
         $connection = new MockConnection($schemaManager);
 
-        $queueTableCreator = new QueueTableCreator($connection);
+        $queueTableCreator = new DoctrineDbalTableCreator($connection);
 
         $queueTableCreator->createDataBaseTable();
 
@@ -82,7 +82,7 @@ class QueueTableCreatorTest extends TestCase
         };
         $connection = new MockConnection($schemaManager);
 
-        $queueTableCreator = new QueueTableCreator($connection);
+        $queueTableCreator = new DoctrineDbalTableCreator($connection);
 
         $queueTableCreator->createDataBaseTable();
 

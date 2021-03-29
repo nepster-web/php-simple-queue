@@ -52,7 +52,7 @@ or add
 :computer: Basic Usage
 ----------------------
 
-Create a database connection:
+Create storage connection and store ([see more information](./docs/guide/store.md)):
 
 ```php
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
@@ -60,48 +60,54 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'user' => 'root',
     'password' => '*******',
     'host' => 'localhost',
-    'port' => '54320',
+    'port' => '5432',
     'driver' => 'pdo_pgsql',
 ]);
+
+$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
 ```
 
-### Send a message to queue (producing)
+
+Create configuration ([see more information](./docs/guide/configuration.md)):
 
 ```php
-// $connection - create doctrine connection
+$config = \Simple\Queue\Config::getDefault()
+    ->changeRedeliveryTimeInSeconds(100)
+    ->changeNumberOfAttemptsBeforeFailure(3)
+    ->registerJob(MyJob::class, new MyJob())
+    ->registerProcessor('my_queue', static function(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string {
+   
+        // Your message handling logic
+        
+        return \Simple\Queue\Consumer::STATUS_ACK;
+    });
+```
 
-$producer = new \Simple\Queue\Producer($connection);
+### Send a new message to queue (producing)
 
-$message = new Message('my_queue', json_decode($data));
+```php
+$producer = new \Simple\Queue\Producer($store, $config);
+
+$message = $producer->createMessage('my_queue', ['key' => 'value']);
+
 $producer->send($message);
 ```
+
 
 ### Job dispatching (producing)
 
 ```php
-// $connection - create doctrine connection
-
-$producer = new \Simple\Queue\Producer($connection);
+$producer = new \Simple\Queue\Producer($store, $config);
 
 $producer->dispatch(MyJob::class, ['key' => 'value']);
 ```
 
+
 ### Processing messages from queue (consuming)
 
 ```php
-// $connection - create doctrine connection
-
-$producer = new \Simple\Queue\Producer($connection);
-$consumer = new \Simple\Queue\Consumer($connection, $producer);
-
-// process all messages from queue
-$consumer->bind('my_queue', static function(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string {
-
-    // Your message handling logic
-    var_dump($message->getBody() . PHP_EOL);
-
-    return \Simple\Queue\Consumer::STATUS_ACK;
-});
+$producer = new \Simple\Queue\Producer($store, $config);
+$consumer = new \Simple\Queue\Consumer($store, $producer, $config);
 
 $consumer->consume();
 ```
@@ -123,7 +129,7 @@ or you can run tests in a docker container
 cd .docker
 make build
 make start 
-make comoposer cmd='test'
+make composer cmd='test'
 ```
 
 ---------------------------------

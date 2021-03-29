@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simple\QueueTest;
+namespace Simple\QueueTest\Serializer;
 
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\Serializer\BaseSerializer;
@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 /**
  * Class SerializerTest
- * @package Simple\QueueTest
+ * @package Simple\QueueTest\Serializer
  */
 class SerializerTest extends TestCase
 {

@@ -8,7 +8,9 @@ Demonstration of work PHP Simple Queue using SQLite.
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Send message](./send_message.md)
+* [Store](./store.md)
+* [Configuration](./configuration.md)
+* [Producer (Send message)](./producer.md)
 * [Consuming](./consuming.md)
 * **[Example](./example.md)**
 * [Cookbook](./cookbook.md)
@@ -40,8 +42,15 @@ Advanced example of processing messages from a queue: [advanced-consume.php](../
 
 > Both examples should work in different tabs because they are daemons (while(true){}).
 
+<br>
 
-**Also, you can access to php:**
+**PHP command access:**
 
-- `make php cmd='-v'`:
-- `make composer cmd='update'`:
+- `make php cmd='{you_command}'`:
+- Example: `make php cmd='-v'`:
+
+<br>
+
+**Composer command access:**
+- `make composer cmd='{you_command}'`:
+- Example: - `make composer cmd='update'`:

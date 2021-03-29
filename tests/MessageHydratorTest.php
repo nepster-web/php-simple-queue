@@ -64,7 +64,7 @@ class MessageHydratorTest extends TestCase
         $message = $this->generateBaseMessage();
 
         $newMessage = (new MessageHydrator($message))
-            ->unJobable()
+            ->jobable(false)
             ->getMessage();
 
         self::assertFalse($message->isJob());

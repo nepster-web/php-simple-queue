@@ -8,99 +8,51 @@ An example of using this library.
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* **[Send message](./send_message.md)**
+* [Store](./store.md)
+* [Configuration](./configuration.md)
+* **[Producer (Send message)](./producer.md)**
 * [Consuming](./consuming.md)
 * [Example](./example.md)
 * [Cookbook](./cookbook.md)
 
 <br>
 
-## :page_facing_up: Usage basics
+## :page_facing_up: Producer
 
-Let's define the terms:
-
-* **Producer** - to send a message to the queue.
-* **Consumer** - handler, built on top of a transport functionality. The goal of the component is to simply consume messages.
-* **Message** - data to be processed.
-
-
-Next you need to configure and run **Consumer** and then send messages.
+You need to configure [$store](./store.md) and [$config](./configuration.md) to send new messages.
 
 <br>
 
-**Config:**
--------------------------------
-
-You can use config for producer and consumer:
-
-```php
-$config = \Simple\Queue\Config::getDefault()
-    ->changeNumberOfAttemptsBeforeFailure(5)
-    ->changeRedeliveryTimeInSeconds(180)
-    ->withSerializer(new \Simple\Queue\Serializer\SymfonySerializer());
-```
-
-<br>
-
-**Create connection:**
--------------------------------
-
-You can get a DBAL Connection through the Doctrine\DBAL\DriverManager class.
-
-```php
-$connection = \Doctrine\DBAL\DriverManager::getConnection([
-    'driver' => 'pdo_sqlite',
-    'path' => '/db/queue.db'
-]);
-```
-
-or
-
-```php
-$connection = \Doctrine\DBAL\DriverManager::getConnection([
-    'dbname' => 'my_db',
-    'user' => 'root',
-    'password' => '*******',
-    'host' => 'localhost',
-    'port' => '54320',
-    'driver' => 'pdo_pgsql',
-]);
-```
-
-[See more information.](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html)
-
-<br>
-
-**Send a message to queue:**
+**Send a new message to queue:**
 -------------------------------
 
 ```php
-$producer = new \Simple\Queue\Producer($connection);
+$producer = new \Simple\Queue\Producer($store, $config);
+
+$producer->send($producer->createMessage('my_queue', ['my_data']));
+```
+
+or a custom example (you need to think about serialization):
+
+```php
+$producer = new \Simple\Queue\Producer($store, $config);
 
 $message = (new \Simple\Queue\Message('my_queue', 'my_data'))
-    ->setEvent('my_event')
+    ->withEvent('my_event')
     ->changePriority(\Simple\Queue\Priority::VERY_HIGH);
 
 $producer->send($message);
-```
-
-or a simpler example:
-
-```php
-$producer = new \Simple\Queue\Producer($connection);
-
-$producer->send($producer->createMessage('my_queue', ['my_data']));
 ```
 
 You can send a message from anywhere in the application to process it in the background. 
 
 <br>
 
-**Send a message to queue through job:**
+**Send a new message to queue through job:**
 -------------------------------
 
 ```php
-$producer = new \Simple\Queue\Producer($connection);
+$producer = new \Simple\Queue\Producer($store, $config);
 
 $producer->dispatch(MyJob::class, ['key' => 'value']);
 ```
@@ -137,10 +89,10 @@ $message->getRedeliveredAt();
 $message->isRedelivered();
 
 // public setters
-$message->setRedeliveredAt($redeliveredAt);
+$message->changeRedeliveredAt($redeliveredAt);
 $message->changeQueue($queue);
 $message->changePriority($priority);
-$message->setEvent($event);
+$message->withEvent($event);
 ```
 
 Each message has [Status](../../src/Status.php) and [Priority](../../src/Priority.php).
