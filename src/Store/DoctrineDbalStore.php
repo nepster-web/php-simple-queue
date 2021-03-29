@@ -7,7 +7,6 @@ namespace Simple\Queue\Store;
 use Throwable;
 use Ramsey\Uuid\Uuid;
 use DateTimeImmutable;
-use Simple\Queue\Config;
 use Simple\Queue\Status;
 use Simple\Queue\Message;
 use Doctrine\DBAL\Connection;
@@ -23,18 +22,13 @@ class DoctrineDbalStore implements StoreInterface
     /** @var Connection */
     private Connection $connection;
 
-    /** @var Config */
-    private Config $config;
-
     /**
      * DoctrineDbalStore constructor.
      * @param Connection $connection
-     * @param Config|null $config
      */
-    public function __construct(Connection $connection, ?Config $config = null)
+    public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-        $this->config = $config ?: Config::getDefault();
     }
 
     /**
@@ -43,49 +37,6 @@ class DoctrineDbalStore implements StoreInterface
     public function init(): void
     {
         (new DoctrineDbalTableCreator($this->connection))->createDataBaseTable();
-    }
-
-    /**
-     * @inheritDoc
-     * @throws StoreException
-     */
-    public function send(Message $message): void
-    {
-        $dataMessage = [
-            'id' => Uuid::uuid4()->toString(),
-            'status' => $message->getStatus(),
-            'created_at' => $message->getCreatedAt(),
-            'redelivered_at' => $message->getRedeliveredAt(),
-            'attempts' => $message->getAttempts(),
-            'queue' => $message->getQueue(),
-            'event' => $message->getEvent(),
-            'is_job' => $message->isJob(),
-            'body' => $message->getBody(),
-            'priority' => $message->getPriority(),
-            'error' => $message->getError(),
-            'exact_time' => $message->getExactTime(),
-        ];
-        try {
-            $rowsAffected = $this->connection->insert(DoctrineDbalTableCreator::getTableName(), $dataMessage, [
-                'id' => Types::GUID,
-                'status' => Types::STRING,
-                'created_at' => Types::DATETIME_IMMUTABLE,
-                'redelivered_at' => Types::DATETIME_IMMUTABLE,
-                'attempts' => Types::SMALLINT,
-                'queue' => Types::STRING,
-                'event' => Types::STRING,
-                'is_job' => Types::BOOLEAN,
-                'body' => Types::TEXT,
-                'priority' => Types::SMALLINT,
-                'error' => Types::TEXT,
-                'exact_time' => Types::BIGINT,
-            ]);
-            if ($rowsAffected !== 1) {
-                throw new StoreException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
-            }
-        } catch (Throwable $e) {
-            throw new StoreException('The transport fails to send the message due to some internal error.', 0, $e);
-        }
     }
 
     /**
@@ -131,6 +82,49 @@ class DoctrineDbalStore implements StoreInterface
         }
 
         return null;
+    }
+
+    /**
+     * @inheritDoc
+     * @throws StoreException
+     */
+    public function send(Message $message): void
+    {
+        $dataMessage = [
+            'id' => Uuid::uuid4()->toString(),
+            'status' => $message->getStatus(),
+            'created_at' => $message->getCreatedAt(),
+            'redelivered_at' => $message->getRedeliveredAt(),
+            'attempts' => $message->getAttempts(),
+            'queue' => $message->getQueue(),
+            'event' => $message->getEvent(),
+            'is_job' => $message->isJob(),
+            'body' => $message->getBody(),
+            'priority' => $message->getPriority(),
+            'error' => $message->getError(),
+            'exact_time' => $message->getExactTime(),
+        ];
+        try {
+            $rowsAffected = $this->connection->insert(DoctrineDbalTableCreator::getTableName(), $dataMessage, [
+                'id' => Types::GUID,
+                'status' => Types::STRING,
+                'created_at' => Types::DATETIME_IMMUTABLE,
+                'redelivered_at' => Types::DATETIME_IMMUTABLE,
+                'attempts' => Types::SMALLINT,
+                'queue' => Types::STRING,
+                'event' => Types::STRING,
+                'is_job' => Types::BOOLEAN,
+                'body' => Types::TEXT,
+                'priority' => Types::SMALLINT,
+                'error' => Types::TEXT,
+                'exact_time' => Types::BIGINT,
+            ]);
+            if ($rowsAffected !== 1) {
+                throw new StoreException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
+            }
+        } catch (Throwable $e) {
+            throw new StoreException('The transport fails to send the message due to some internal error.', 0, $e);
+        }
     }
 
     /**

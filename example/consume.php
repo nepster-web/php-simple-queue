@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
-
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'driver' => 'pdo_sqlite',
     'path' => '/db/queue.db',
@@ -30,6 +29,7 @@ while (true) {
         $consumer->acknowledge($message);
 
         echo sprintf('Received message: %s ', $message->getBody());
+
         echo PHP_EOL;
     }
 
