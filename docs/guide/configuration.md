@@ -16,7 +16,7 @@ An example of using this library.
 
 <br>
 
-## :page_facing_up: Usage basics
+## :page_facing_up: Config
 
 Let's define the terms:
 
@@ -29,10 +29,9 @@ Next you need to configure and run **Consumer** and then send messages.
 
 <br>
 
-**Config:**
--------------------------------
+**Create config:**
 
-You can use config for producer and consumer:
+You need to use the same config for producer and consumer, for example:
 
 ```php
 $config = \Simple\Queue\Config::getDefault()
@@ -44,7 +43,6 @@ $config = \Simple\Queue\Config::getDefault()
 <br>
 
 **Create connection:**
--------------------------------
 
 You can get a DBAL Connection through the Doctrine\DBAL\DriverManager class.
 

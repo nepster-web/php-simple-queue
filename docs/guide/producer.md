@@ -16,15 +16,17 @@ An example of using this library.
 
 <br>
 
-## :page_facing_up: Usage basics
+## :page_facing_up: Producer
+
+You need to configure `$store` and `$config` to send new messages.
+[Detailed information](./configuration.md).
 
 
 **Send a message to queue:**
 -------------------------------
 
 ```php
-$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
-$producer = new \Simple\Queue\Producer($store);
+$producer = new \Simple\Queue\Producer($store, $config);
 
 $message = (new \Simple\Queue\Message('my_queue', 'my_data'))
     ->setEvent('my_event')
@@ -36,8 +38,7 @@ $producer->send($message);
 or a simpler example:
 
 ```php
-$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
-$producer = new \Simple\Queue\Producer($store);
+$producer = new \Simple\Queue\Producer($store, $config);
 
 $producer->send($producer->createMessage('my_queue', ['my_data']));
 ```
@@ -50,8 +51,7 @@ You can send a message from anywhere in the application to process it in the bac
 -------------------------------
 
 ```php
-$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
-$producer = new \Simple\Queue\Producer($store);
+$producer = new \Simple\Queue\Producer($store, $config);
 
 $producer->dispatch(MyJob::class, ['key' => 'value']);
 ```
