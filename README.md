@@ -52,7 +52,7 @@ or add
 :computer: Basic Usage
 ----------------------
 
-Create a database connection and store:
+Create a database connection and store ([See more information.](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html)):
 
 ```php
 $connection = \Doctrine\DBAL\DriverManager::getConnection([
@@ -66,8 +66,6 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
 
 $store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
 ```
-
-[See more information.](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html)
 
 
 Create configuration:

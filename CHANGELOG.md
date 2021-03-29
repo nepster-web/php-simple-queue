@@ -4,7 +4,7 @@ PHP Simple Queue Change Log
 A changelog of all notable changes made to this library.
 
 - *ENH*: Enhance or modify
-- *BUG*: fix error
+- *FIX*: fix error or a small change
 
 
 1.0.0 under development
@@ -27,11 +27,11 @@ A changelog of all notable changes made to this library.
 1.0.0-Alpha-3 ???? ??, 2021
 ---------------------------
 - *ENH*: [composer.json](./composer.json) updating package versions
-- *ENH*: Implemented abstraction for store([DoctrineDbalStore](./src/Store/DoctrineDbalStore.php))
+- *ENH*: Implemented abstraction for store ([DoctrineDbalStore](./src/Store/DoctrineDbalStore.php))
 - *ENH*: Config expanded (job registration and processor registration)
 - *ENH*: Refactoring class architecture (tests updating)
 - *ENH*: Improved documentation
-- *BUG*: Fixed data loss when redelivery message
+- *FIX*: Fixed data loss when redelivery message
 
 
 1.0.0-Alpha-2 March 17, 2021

@@ -40,8 +40,13 @@ Advanced example of processing messages from a queue: [advanced-consume.php](../
 
 > Both examples should work in different tabs because they are daemons (while(true){}).
 
+<br>
 
-**Also, you can access to php:**
+**PHP command access:**
 
 - `make php cmd='-v'`:
+
+<br>
+
+**Composer command access:**
 - `make composer cmd='update'`:
