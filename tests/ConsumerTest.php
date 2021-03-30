@@ -28,7 +28,7 @@ class ConsumerTest extends TestCase
 
         MessageHydrator::changeProperty($message, 'id', $id);
 
-        $store = new class(new MockConnection()) extends DoctrineDbalTransport {
+        $transport = new class(new MockConnection()) extends DoctrineDbalTransport {
             public static string $deleteMessageId;
 
             public function deleteMessage(Message $message): void
@@ -37,10 +37,10 @@ class ConsumerTest extends TestCase
             }
         };
 
-        $consumer = new Consumer($store, new Producer($store));
+        $consumer = new Consumer($transport, new Producer($transport));
         $consumer->acknowledge($message);
 
-        self::assertEquals($id, $store::$deleteMessageId);
+        self::assertEquals($id, $transport::$deleteMessageId);
     }
 
     public function testRejectWithRequeue(): void
@@ -50,7 +50,7 @@ class ConsumerTest extends TestCase
 
         MessageHydrator::changeProperty($message, 'id', $id);
 
-        $store = new class(new MockConnection()) extends DoctrineDbalTransport {
+        $transport = new class(new MockConnection()) extends DoctrineDbalTransport {
             public static string $deleteMessageId;
 
             public function deleteMessage(Message $message): void
@@ -66,19 +66,19 @@ class ConsumerTest extends TestCase
             }
         };
 
-        $producer = new Producer($store);
+        $producer = new Producer($transport);
 
-        $consumer = new Consumer($store, $producer);
+        $consumer = new Consumer($transport, $producer);
         $consumer->reject($message, true);
 
-        self::assertEquals($id, $store::$deleteMessageId);
+        self::assertEquals($id, $transport::$deleteMessageId);
 
-        self::assertEquals(Status::REDELIVERED, $store::$message->getStatus());
+        self::assertEquals(Status::REDELIVERED, $transport::$message->getStatus());
         self::assertEquals(
             (new DateTimeImmutable())
                 ->modify(sprintf('+%s seconds', Config::getDefault()->getRedeliveryTimeInSeconds()))
                 ->format('Y-m-d H:i:s'),
-            $store::$message->getRedeliveredAt()->format('Y-m-d H:i:s')
+            $transport::$message->getRedeliveredAt()->format('Y-m-d H:i:s')
         );
     }
 
@@ -89,7 +89,7 @@ class ConsumerTest extends TestCase
 
         MessageHydrator::changeProperty($message, 'id', $id);
 
-        $store = new class(new MockConnection()) extends DoctrineDbalTransport {
+        $transport = new class(new MockConnection()) extends DoctrineDbalTransport {
             public static string $deleteMessageId;
 
             public function deleteMessage(Message $message): void
@@ -98,9 +98,9 @@ class ConsumerTest extends TestCase
             }
         };
 
-        $consumer = new Consumer($store, new Producer($store));
+        $consumer = new Consumer($transport, new Producer($transport));
         $consumer->reject($message);
 
-        self::assertEquals($id, $store::$deleteMessageId);
+        self::assertEquals($id, $transport::$deleteMessageId);
     }
 }

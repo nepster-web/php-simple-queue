@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Simple\QueueTest\Helper;
 
+use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Driver\AbstractSQLiteDriver;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
@@ -15,6 +18,9 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 class MockConnection extends Connection
 {
     /** @var array */
+    public array $source = [];
+
+    /** @var array */
     public static array $data = [];
 
     /** @var AbstractSchemaManager */
@@ -23,11 +29,13 @@ class MockConnection extends Connection
     /**
      * @inheritDoc
      * @param AbstractSchemaManager|null $abstractSchemaManager
+     * @param array $source
      * @throws \Doctrine\DBAL\Exception
      */
-    public function __construct(?AbstractSchemaManager $abstractSchemaManager = null)
+    public function __construct(?AbstractSchemaManager $abstractSchemaManager = null, array $source = [])
     {
         $this->abstractSchemaManager = $abstractSchemaManager ?: new MockSchemaManager();
+        $this->source = $source;
 
         $driver = new class extends AbstractSQLiteDriver {
             public function connect(array $params): void
@@ -49,7 +57,7 @@ class MockConnection extends Connection
             'types' => $types,
         ];
 
-        return 0;
+        return $this->source['insert'] ?? 0;
     }
 
     /**
@@ -87,5 +95,24 @@ class MockConnection extends Connection
     public function getSchemaManager(): AbstractSchemaManager
     {
         return $this->abstractSchemaManager;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function executeQuery(string $sql, array $params = [], $types = [], ?QueryCacheProfile $qcp = null): Result
+    {
+        $result = new DBALDriverResult($this->source);
+
+        return new Result($result, $this);
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder(): QueryBuilder
+    {
+        return new class($this) extends QueryBuilder {
+        };
     }
 }

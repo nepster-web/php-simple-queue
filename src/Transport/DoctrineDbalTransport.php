@@ -77,7 +77,7 @@ class DoctrineDbalTransport implements TransportInterface
 
                 return MessageHydrator::createMessage($deliveredMessage);
             } catch (Throwable $e) {
-                throw new TransportException(sprintf('Error reading queue in consumer: "%s".', $e));
+                throw new TransportException(sprintf('Error reading queue in consumer: "%s".', $e->getMessage()), 0, $e);
             }
         }
 
@@ -93,7 +93,7 @@ class DoctrineDbalTransport implements TransportInterface
         $dataMessage = [
             'id' => Uuid::uuid4()->toString(),
             'status' => $message->getStatus(),
-            'created_at' => $message->getCreatedAt(),
+            'created_at' => $message->getCreatedAt()->format('Y-m-d H:i:s'),
             'redelivered_at' => $message->getRedeliveredAt(),
             'attempts' => $message->getAttempts(),
             'queue' => $message->getQueue(),

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simple\QueueTest\Store;
+namespace Simple\QueueTest\Transport;
 
 use Doctrine\DBAL\Schema\Table;
 use PHPUnit\Framework\TestCase;
