@@ -23,9 +23,7 @@ You need to use the same config for producer and consumer.
 
 <br>
 
-**Create config:**
-
-Detailed example:
+**Create example config:**
 
 ```php
 $config = \Simple\Queue\Config::getDefault()

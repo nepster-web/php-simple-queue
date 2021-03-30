@@ -1,7 +1,7 @@
 PHP Simple Queue Example
 ========================
 
-Demonstration of work PHP Simple Queue using SQLite.
+Examples and work demonstrating.
 
 
 ## :book: Guide
