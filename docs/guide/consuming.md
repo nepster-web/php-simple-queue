@@ -56,9 +56,9 @@ $consumer->consume();
 
 **Job processing:**
 -------------------------------
-
-All jobs must be registered in the [configuration](./configuration.md).
-The method ```php $consumer->consume()``` will process jobs with priority.
+You can create and run a sub job, which it is executed separately. You can create as many sub jobs as you like.
+Also, the job can be from another job. All jobs must be registered in the [configuration](./configuration.md).
+The method ```$consumer->consume()``` will process jobs with priority.
 
 **Job example:**
 

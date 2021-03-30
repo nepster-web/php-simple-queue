@@ -17,13 +17,14 @@ Transport - provides methods for management messages in queue.
 
 <br>
 
+> Currently only supported Doctrine DBAL.
+
+<br>
+
 ## :page_facing_up: Transport
 
 The transport uses [Doctrine DBAL](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/) library and SQL 
 like server as a broker. It creates a table there. Pushes and pops messages to\from that table.
-
-
-> Currently only supported Doctrine DBAL.
 
 <br>
 
