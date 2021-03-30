@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Doctrine\DBAL\Schema\Column;
 use Simple\QueueTest\Helper\MockConnection;
 use Simple\QueueTest\Helper\MockSchemaManager;
-use Simple\Queue\Store\DoctrineDbalTableCreator;
+use Simple\Queue\Transport\DoctrineDbalTableCreator;
 
 /**
  * Class QueueTableCreatorTest

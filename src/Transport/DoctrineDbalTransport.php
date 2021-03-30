@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simple\Queue\Store;
+namespace Simple\Queue\Transport;
 
 use Throwable;
 use Ramsey\Uuid\Uuid;
@@ -14,16 +14,16 @@ use Doctrine\DBAL\Types\Types;
 use Simple\Queue\MessageHydrator;
 
 /**
- * Class DoctrineDbalStore
- * @package Simple\Queue\Store
+ * Class DoctrineDbalTransport
+ * @package Simple\Queue\Transport
  */
-class DoctrineDbalStore implements StoreInterface
+class DoctrineDbalTransport implements TransportInterface
 {
     /** @var Connection */
     private Connection $connection;
 
     /**
-     * DoctrineDbalStore constructor.
+     * DoctrineDbalTransport constructor.
      * @param Connection $connection
      */
     public function __construct(Connection $connection)
@@ -41,7 +41,7 @@ class DoctrineDbalStore implements StoreInterface
 
     /**
      * @inheritDoc
-     * @throws StoreException
+     * @throws TransportException
      */
     public function fetchMessage(array $queues = []): ?Message
     {
@@ -77,7 +77,7 @@ class DoctrineDbalStore implements StoreInterface
 
                 return MessageHydrator::createMessage($deliveredMessage);
             } catch (Throwable $e) {
-                throw new StoreException(sprintf('Error reading queue in consumer: "%s".', $e));
+                throw new TransportException(sprintf('Error reading queue in consumer: "%s".', $e));
             }
         }
 
@@ -86,7 +86,7 @@ class DoctrineDbalStore implements StoreInterface
 
     /**
      * @inheritDoc
-     * @throws StoreException
+     * @throws TransportException
      */
     public function send(Message $message): void
     {
@@ -120,16 +120,16 @@ class DoctrineDbalStore implements StoreInterface
                 'exact_time' => Types::BIGINT,
             ]);
             if ($rowsAffected !== 1) {
-                throw new StoreException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
+                throw new TransportException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
             }
         } catch (Throwable $e) {
-            throw new StoreException('The transport fails to send the message due to some internal error.', 0, $e);
+            throw new TransportException('The transport fails to send the message due to some internal error.', 0, $e);
         }
     }
 
     /**
      * @inheritDoc
-     * @throws StoreException
+     * @throws TransportException
      */
     public function changeMessageStatus(Message $message, Status $status): void
     {
@@ -144,7 +144,7 @@ class DoctrineDbalStore implements StoreInterface
 
     /**
      * @inheritDoc
-     * @throws StoreException
+     * @throws TransportException
      */
     public function deleteMessage(Message $message): void
     {

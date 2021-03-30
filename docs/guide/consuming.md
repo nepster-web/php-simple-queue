@@ -1,14 +1,14 @@
 PHP Simple Queue Usage basics
 =============================
 
-An example of using this library.
+Message consumer is an object that is used for receiving messages sent to a destination (processor or job).
 
 
 ## :book: Guide
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Store](./store.md)
+* [Transport](./transport.md)
 * [Configuration](./configuration.md)
 * [Producer (Send message)](./producer.md)
 * **[Consuming](./consuming.md)**
@@ -19,7 +19,7 @@ An example of using this library.
 
 ## Consuming
 
-You need to configure [$store](./store.md) and [$config](./configuration.md) to read and processing messages from the queue.
+You need to configure [$transport](./transport.md) and [$config](./configuration.md) to read and processing messages from the queue.
 [Detailed information](./configuration.md).
 
 You can use a simple php cli, [Symfony/Console](https://symfony.com/doc/current/components/console.html)
@@ -44,8 +44,8 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
-$producer = new \Simple\Queue\Producer($store, $config);
-$consumer = new \Simple\Queue\Consumer($store, $producer, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
+$consumer = new \Simple\Queue\Consumer($transport, $producer, $config);
 
 echo 'Start consuming' . PHP_EOL;
 
@@ -57,11 +57,38 @@ $consumer->consume();
 **Job processing:**
 -------------------------------
 
+All jobs must be registered in the [configuration](./configuration.md).
+The method ```php $consumer->consume()``` will process jobs with priority.
+
+**Job example:**
+
 ```php
 <?php
-    //
-```
 
+declare(strict_types=1);
+
+namespace Application\Job;
+
+class SendInfoToTelegramJob extends \Simple\Queue\Job
+{
+    public function queue(): string
+    {
+        return 'notification';
+    }
+
+    public function attempts(): int
+    {
+        return 5;
+    }
+
+    public function handle(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string
+    {
+        // your logic 
+    
+        return \Simple\Queue\Consumer::STATUS_ACK;
+    }
+}
+```
 
 <br>
 
@@ -87,7 +114,6 @@ If there are no handlers for the message, the message will status `\Simple\Queue
 
 <br>
 
-
 **Custom example for consuming:**
 -------------------------------
 
@@ -100,17 +126,17 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
-$producer = new \Simple\Queue\Producer($store, $config);
-$consumer = new \Simple\Queue\Consumer($store, $producer, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
+$consumer = new \Simple\Queue\Consumer($transport, $producer, $config);
 
 // create table for queue messages
-$store->init();
+$transport->init();
 
 echo 'Start consuming' . PHP_EOL;
 
 while (true) {
 
-    if ($message = $store->fetchMessage(['my_queue'])) {
+    if ($message = $transport->fetchMessage(['my_queue'])) {
 
         // Your message handling logic
 

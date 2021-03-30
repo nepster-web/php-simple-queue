@@ -1,14 +1,14 @@
 PHP Simple Queue Usage basics
 =============================
 
-An example of using this library.
+Configuration.
 
 
 ## :book: Guide
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Store](./store.md)
+* [Transport](./transport.md)
 * **[Configuration](./configuration.md)**
 * [Producer (Send message)](./producer.md)
 * [Consuming](./consuming.md)

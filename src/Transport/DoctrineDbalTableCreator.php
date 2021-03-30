@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simple\Queue\Store;
+namespace Simple\Queue\Transport;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
@@ -10,7 +10,7 @@ use Doctrine\DBAL\Schema\Table;
 
 /**
  * Class DoctrineDbalTableCreator
- * @package Simple\Queue\Store
+ * @package Simple\Queue\Transport
  */
 class DoctrineDbalTableCreator
 {

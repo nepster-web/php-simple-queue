@@ -22,10 +22,10 @@ $config = \Simple\Queue\Config::getDefault()
     ->changeNumberOfAttemptsBeforeFailure(3)
     ->registerProcessor('my_queue', $processor);
 
-$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
+$transport = new \Simple\Queue\Transport\DoctrineDbalTransport($connection);
 
-$producer = new \Simple\Queue\Producer($store, $config);
-$consumer = new \Simple\Queue\Consumer($store, $producer, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
+$consumer = new \Simple\Queue\Consumer($transport, $producer, $config);
 
 
 echo 'Start consuming' . PHP_EOL;

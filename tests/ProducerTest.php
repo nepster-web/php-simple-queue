@@ -15,10 +15,10 @@ use Simple\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\QueueException;
 use Simple\Queue\MessageHydrator;
-use Simple\Queue\Store\StoreException;
-use Simple\Queue\Store\DoctrineDbalStore;
 use Simple\QueueTest\Helper\MockConnection;
+use Simple\Queue\Transport\TransportException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Simple\Queue\Transport\DoctrineDbalTransport;
 
 /**
  * Class ProducerTest
@@ -30,7 +30,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new class($connection) extends DoctrineDbalStore {
+        $store = new class($connection) extends DoctrineDbalTransport {
             public static Message $message;
 
             public function send(Message $message): void
@@ -51,7 +51,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $body = new class() {
             public string $data = 'my_data';
@@ -73,7 +73,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $producer = new Producer($store);
         $producer->send($producer->createMessage('my_queue', ['my_data']));
@@ -89,7 +89,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $this->expectException(QueueException::class);
         $this->expectExceptionMessage('The closure cannot be serialized.');
@@ -102,9 +102,9 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(0);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
-        $this->expectException(StoreException::class);
+        $this->expectException(TransportException::class);
         $this->expectExceptionMessage('The transport fails to send the message due to some internal error.');
 
         $producer = new Producer($store);
@@ -115,7 +115,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $job = new class() extends Job {
             public function handle(Message $message, Producer $producer): string
@@ -140,7 +140,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $this->expectException(QueueException::class);
         $this->expectExceptionMessage(sprintf('Job "%s" not registered.', 'non_registered_job'));
@@ -152,7 +152,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $message = new Message('my_queue', '');
 
@@ -167,7 +167,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $message = (new MessageHydrator(new Message('my_queue', '')))
             ->changeStatus(Status::IN_PROCESS)
@@ -190,7 +190,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $message = (new MessageHydrator(new Message('my_queue', '')))
             ->changeStatus(Status::FAILURE)
@@ -206,7 +206,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $redeliveredAt = (new \DateTimeImmutable())->modify('-10 minutes');
 
@@ -227,7 +227,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $redeliveredAt = (new \DateTimeImmutable())->modify('+10 minutes');
 

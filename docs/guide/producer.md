@@ -1,14 +1,14 @@
 PHP Simple Queue Usage basics
 =============================
 
-An example of using this library.
+Message producer object to send messages to a queue.
 
 
 ## :book: Guide
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Store](./store.md)
+* [Transport](./transport.md)
 * [Configuration](./configuration.md)
 * **[Producer (Send message)](./producer.md)**
 * [Consuming](./consuming.md)
@@ -19,7 +19,7 @@ An example of using this library.
 
 ## :page_facing_up: Producer
 
-You need to configure [$store](./store.md) and [$config](./configuration.md) to send new messages.
+You need to configure [$transport](./transport.md) and [$config](./configuration.md) to send new messages.
 
 <br>
 
@@ -27,7 +27,7 @@ You need to configure [$store](./store.md) and [$config](./configuration.md) to 
 -------------------------------
 
 ```php
-$producer = new \Simple\Queue\Producer($store, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
 
 $producer->send($producer->createMessage('my_queue', ['my_data']));
 ```
@@ -35,7 +35,7 @@ $producer->send($producer->createMessage('my_queue', ['my_data']));
 or a custom example (you need to think about serialization):
 
 ```php
-$producer = new \Simple\Queue\Producer($store, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
 
 $message = (new \Simple\Queue\Message('my_queue', 'my_data'))
     ->withEvent('my_event')
@@ -52,7 +52,7 @@ You can send a message from anywhere in the application to process it in the bac
 -------------------------------
 
 ```php
-$producer = new \Simple\Queue\Producer($store, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
 
 $producer->dispatch(MyJob::class, ['key' => 'value']);
 ```

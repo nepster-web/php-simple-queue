@@ -9,20 +9,20 @@ $connection = \Doctrine\DBAL\DriverManager::getConnection([
     'path' => '/db/queue.db',
 ]);
 
-$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
+$transport = new \Simple\Queue\Transport\DoctrineDbalTransport($connection);
 
-$producer = new \Simple\Queue\Producer($store);
-$consumer = new \Simple\Queue\Consumer($store, $producer);
+$producer = new \Simple\Queue\Producer($transport);
+$consumer = new \Simple\Queue\Consumer($transport, $producer);
 
 // create table for queue messages
-$store->init();
+$transport->init();
 
 
 echo 'Start consuming' . PHP_EOL;
 
 while (true) {
 
-    if ($message = $store->fetchMessage(['my_queue'])) {
+    if ($message = $transport->fetchMessage(['my_queue'])) {
 
         // Your message handling logic
 
