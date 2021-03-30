@@ -30,7 +30,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new class($connection) extends DoctrineDbalTransport {
+        $transport = new class($connection) extends DoctrineDbalTransport {
             public static Message $message;
 
             public function send(Message $message): void
@@ -39,19 +39,19 @@ class ProducerTest extends TestCase
             }
         };
 
-        $producer = new Producer($store);
+        $producer = new Producer($transport);
         $message = $producer->createMessage('my_queue', '');
 
         $producer->send($message);
 
-        self::assertEquals($store::$message, $message);
+        self::assertEquals($transport::$message, $message);
     }
 
     public function testBodyAsObjectWithMethodToString(): void
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $body = new class() {
             public string $data = 'my_data';
@@ -62,7 +62,7 @@ class ProducerTest extends TestCase
             }
         };
 
-        $producer = new Producer($store);
+        $producer = new Producer($transport);
         $producer->send($producer->createMessage('my_queue', $body));
 
         self::assertEquals('queue', ($connection::$data)['insert'][0]);
@@ -73,9 +73,9 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
-        $producer = new Producer($store);
+        $producer = new Producer($transport);
         $producer->send($producer->createMessage('my_queue', ['my_data']));
 
         self::assertEquals('queue', ($connection::$data)['insert'][0]);
@@ -89,12 +89,12 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $this->expectException(QueueException::class);
         $this->expectExceptionMessage('The closure cannot be serialized.');
 
-        (new Producer($store))->createMessage('my_queue', static function (): void {
+        (new Producer($transport))->createMessage('my_queue', static function (): void {
         });
     }
 
@@ -102,12 +102,12 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(0);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $this->expectException(TransportException::class);
         $this->expectExceptionMessage('The transport fails to send the message due to some internal error.');
 
-        $producer = new Producer($store);
+        $producer = new Producer($transport);
         $producer->send(new Message('my_queue', ''));
     }
 
@@ -115,7 +115,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $job = new class() extends Job {
             public function handle(Message $message, Producer $producer): string
@@ -126,7 +126,7 @@ class ProducerTest extends TestCase
 
         $config = (new Config())->registerJob('job', $job);
 
-        $producer = new Producer($store, $config);
+        $producer = new Producer($transport, $config);
         $producer->dispatch('job', ['my_data']);
 
         self::assertEquals('queue', ($connection::$data)['insert'][0]);
@@ -140,23 +140,23 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $this->expectException(QueueException::class);
         $this->expectExceptionMessage(sprintf('Job "%s" not registered.', 'non_registered_job'));
 
-        (new Producer($store))->dispatch('non_registered_job', []);
+        (new Producer($transport))->dispatch('non_registered_job', []);
     }
 
     public function testDefaultMakeRedeliveryMessage(): void
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $message = new Message('my_queue', '');
 
-        $redeliveryMessage = (new Producer($store))->makeRedeliveryMessage($message);
+        $redeliveryMessage = (new Producer($transport))->makeRedeliveryMessage($message);
 
         self::assertEquals(Status::REDELIVERED, $redeliveryMessage->getStatus());
         self::assertNotNull($redeliveryMessage->getRedeliveredAt());
@@ -167,7 +167,7 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $message = (new MessageHydrator(new Message('my_queue', '')))
             ->changeStatus(Status::IN_PROCESS)
@@ -176,7 +176,7 @@ class ProducerTest extends TestCase
             ->changeAttempts(100)
             ->getMessage();
 
-        $redeliveryMessage = (new Producer($store))->makeRedeliveryMessage($message);
+        $redeliveryMessage = (new Producer($transport))->makeRedeliveryMessage($message);
 
         self::assertEquals(Status::REDELIVERED, $redeliveryMessage->getStatus());
         self::assertNotNull($redeliveryMessage->getError());
@@ -190,13 +190,13 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $message = (new MessageHydrator(new Message('my_queue', '')))
             ->changeStatus(Status::FAILURE)
             ->getMessage();
 
-        $redeliveryMessage = (new Producer($store))->makeRedeliveryMessage($message);
+        $redeliveryMessage = (new Producer($transport))->makeRedeliveryMessage($message);
 
         self::assertEquals(Status::FAILURE, $redeliveryMessage->getStatus());
         self::assertNull($redeliveryMessage->getRedeliveredAt());
@@ -206,13 +206,13 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $redeliveredAt = (new \DateTimeImmutable())->modify('-10 minutes');
 
         $message = (new Message('my_queue', ''))->changeRedeliveredAt($redeliveredAt);
 
-        $redeliveryMessage = (new Producer($store))->makeRedeliveryMessage($message);
+        $redeliveryMessage = (new Producer($transport))->makeRedeliveryMessage($message);
 
         $redeliveredTime = (new DateTimeImmutable('now'))
             ->modify(sprintf('+%s seconds', Config::getDefault()->getRedeliveryTimeInSeconds()));
@@ -227,13 +227,13 @@ class ProducerTest extends TestCase
     {
         $connection = $this->getMockConnectionWithInsert(1);
 
-        $store = new DoctrineDbalTransport($connection);
+        $transport = new DoctrineDbalTransport($connection);
 
         $redeliveredAt = (new \DateTimeImmutable())->modify('+10 minutes');
 
         $message = (new Message('my_queue', ''))->changeRedeliveredAt($redeliveredAt);
 
-        $redeliveryMessage = (new Producer($store))->makeRedeliveryMessage($message);
+        $redeliveryMessage = (new Producer($transport))->makeRedeliveryMessage($message);
 
         self::assertEquals(
             $redeliveredAt->format('Y-m-d H:i:s'),
