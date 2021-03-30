@@ -52,18 +52,9 @@ or add
 :computer: Basic Usage
 ----------------------
 
-Create storage connection and store ([see more information](./docs/guide/store.md)):
+Create transport ([see more information](./docs/guide/transport.md)):
 
 ```php
-$connection = \Doctrine\DBAL\DriverManager::getConnection([
-    'dbname' => 'my_db',
-    'user' => 'root',
-    'password' => '*******',
-    'host' => 'localhost',
-    'port' => '5432',
-    'driver' => 'pdo_pgsql',
-]);
-
 $transport = new \Simple\Queue\Transport\DoctrineDbalTransport($connection);
 ```
 
