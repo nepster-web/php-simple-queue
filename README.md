@@ -52,19 +52,10 @@ or add
 :computer: Basic Usage
 ----------------------
 
-Create storage connection and store ([see more information](./docs/guide/store.md)):
+Create transport ([see more information](./docs/guide/transport.md)):
 
 ```php
-$connection = \Doctrine\DBAL\DriverManager::getConnection([
-    'dbname' => 'my_db',
-    'user' => 'root',
-    'password' => '*******',
-    'host' => 'localhost',
-    'port' => '5432',
-    'driver' => 'pdo_pgsql',
-]);
-
-$store = new \Simple\Queue\Store\DoctrineDbalStore($connection);
+$transport = new \Simple\Queue\Transport\DoctrineDbalTransport($connection);
 ```
 
 
@@ -86,7 +77,7 @@ $config = \Simple\Queue\Config::getDefault()
 ### Send a new message to queue (producing)
 
 ```php
-$producer = new \Simple\Queue\Producer($store, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
 
 $message = $producer->createMessage('my_queue', ['key' => 'value']);
 
@@ -97,7 +88,7 @@ $producer->send($message);
 ### Job dispatching (producing)
 
 ```php
-$producer = new \Simple\Queue\Producer($store, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
 
 $producer->dispatch(MyJob::class, ['key' => 'value']);
 ```
@@ -106,8 +97,8 @@ $producer->dispatch(MyJob::class, ['key' => 'value']);
 ### Processing messages from queue (consuming)
 
 ```php
-$producer = new \Simple\Queue\Producer($store, $config);
-$consumer = new \Simple\Queue\Consumer($store, $producer, $config);
+$producer = new \Simple\Queue\Producer($transport, $config);
+$consumer = new \Simple\Queue\Consumer($transport, $producer, $config);
 
 $consumer->consume();
 ```

@@ -12,8 +12,8 @@ use Simple\Queue\Consumer;
 use Simple\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\MessageHydrator;
-use Simple\Queue\Store\DoctrineDbalStore;
 use Simple\QueueTest\Helper\MockConnection;
+use Simple\Queue\Transport\DoctrineDbalTransport;
 
 /**
  * Class ConsumerTest
@@ -28,7 +28,7 @@ class ConsumerTest extends TestCase
 
         MessageHydrator::changeProperty($message, 'id', $id);
 
-        $store = new class(new MockConnection()) extends DoctrineDbalStore {
+        $store = new class(new MockConnection()) extends DoctrineDbalTransport {
             public static string $deleteMessageId;
 
             public function deleteMessage(Message $message): void
@@ -50,7 +50,7 @@ class ConsumerTest extends TestCase
 
         MessageHydrator::changeProperty($message, 'id', $id);
 
-        $store = new class(new MockConnection()) extends DoctrineDbalStore {
+        $store = new class(new MockConnection()) extends DoctrineDbalTransport {
             public static string $deleteMessageId;
 
             public function deleteMessage(Message $message): void
@@ -89,7 +89,7 @@ class ConsumerTest extends TestCase
 
         MessageHydrator::changeProperty($message, 'id', $id);
 
-        $store = new class(new MockConnection()) extends DoctrineDbalStore {
+        $store = new class(new MockConnection()) extends DoctrineDbalTransport {
             public static string $deleteMessageId;
 
             public function deleteMessage(Message $message): void

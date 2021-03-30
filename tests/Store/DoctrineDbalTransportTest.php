@@ -12,8 +12,8 @@ use Doctrine\DBAL\Schema\Table;
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\QueueException;
 use Simple\Queue\MessageHydrator;
-use Simple\Queue\Store\DoctrineDbalStore;
 use Simple\QueueTest\Helper\MockConnection;
+use Simple\Queue\Transport\DoctrineDbalTransport;
 
 /**
  * Class DoctrineDbalStoreTest
@@ -24,7 +24,7 @@ class DoctrineDbalStoreTest extends TestCase
     public function testInit(): void
     {
         $connection = new MockConnection();
-        $store = new class($connection) extends DoctrineDbalStore {
+        $store = new class($connection) extends DoctrineDbalTransport {
         };
 
         $store->init();
@@ -73,7 +73,7 @@ class DoctrineDbalStoreTest extends TestCase
         $this->expectException(QueueException::class);
         $this->expectExceptionMessage('The message has no id. It looks like it was not sent to the queue.');
 
-        $store = new DoctrineDbalStore(new MockConnection());
+        $store = new DoctrineDbalTransport(new MockConnection());
 
         $store->changeMessageStatus(new Message('my_queue', ''), new Status(Status::IN_PROCESS));
     }
@@ -82,7 +82,7 @@ class DoctrineDbalStoreTest extends TestCase
     {
         $connection = new MockConnection();
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $message = new Message('my_queue', '');
         MessageHydrator::changeProperty($message, 'id', Uuid::uuid4()->toString());
@@ -98,7 +98,7 @@ class DoctrineDbalStoreTest extends TestCase
         $this->expectException(QueueException::class);
         $this->expectExceptionMessage('The message has no id. It looks like it was not sent to the queue.');
 
-        $store = new DoctrineDbalStore(new MockConnection());
+        $store = new DoctrineDbalTransport(new MockConnection());
 
         $store->deleteMessage(new Message('my_queue', ''));
     }
@@ -107,7 +107,7 @@ class DoctrineDbalStoreTest extends TestCase
     {
         $connection = new MockConnection();
 
-        $store = new DoctrineDbalStore($connection);
+        $store = new DoctrineDbalTransport($connection);
 
         $message = new Message('my_queue', '');
         MessageHydrator::changeProperty($message, 'id', Uuid::uuid4()->toString());

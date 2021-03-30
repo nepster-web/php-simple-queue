@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Simple\Queue\Store;
+namespace Simple\Queue\Transport;
 
 use Simple\Queue\Status;
 use Simple\Queue\Message;
 
 /**
- * Interface StoreInterface
- * @package Simple\Queue\Store
+ * Interface TransportInterface
+ * @package Simple\Queue\Transport
  */
-interface StoreInterface
+interface TransportInterface
 {
     /**
-     * Store initialization
+     * Transport initialization
      */
     public function init(): void;
 

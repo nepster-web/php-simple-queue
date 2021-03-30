@@ -1,14 +1,14 @@
 PHP Simple Queue Example
 ========================
 
-Demonstration of work PHP Simple Queue using SQLite.
+Examples and work demonstrating.
 
 
 ## :book: Guide
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Store](./store.md)
+* [Transport](./transport.md)
 * [Configuration](./configuration.md)
 * [Producer (Send message)](./producer.md)
 * [Consuming](./consuming.md)

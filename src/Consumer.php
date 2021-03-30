@@ -6,7 +6,7 @@ namespace Simple\Queue;
 
 use Throwable;
 use InvalidArgumentException;
-use Simple\Queue\Store\StoreInterface;
+use Simple\Queue\Transport\TransportInterface;
 
 /**
  * Class Consumer
@@ -29,8 +29,8 @@ class Consumer
     /** Use in case of a delayed queue */
     public const STATUS_REQUEUE = 'REQUEUE';
 
-    /** @var StoreInterface */
-    protected StoreInterface $store;
+    /** @var TransportInterface */
+    protected TransportInterface $transport;
 
     /** @var Producer */
     protected Producer $producer;
@@ -40,13 +40,13 @@ class Consumer
 
     /**
      * Consumer constructor.
-     * @param StoreInterface $store
+     * @param TransportInterface $transport
      * @param Producer $producer
      * @param Config|null $config
      */
-    public function __construct(StoreInterface $store, Producer $producer, ?Config $config = null)
+    public function __construct(TransportInterface $transport, Producer $producer, ?Config $config = null)
     {
-        $this->store = $store;
+        $this->transport = $transport;
         $this->producer = $producer;
         $this->config = $config ?: Config::getDefault();
     }
@@ -58,7 +58,7 @@ class Consumer
      */
     public function acknowledge(Message $message): void
     {
-        $this->store->deleteMessage($message);
+        $this->transport->deleteMessage($message);
     }
 
     /**
@@ -85,10 +85,10 @@ class Consumer
      */
     public function consume(array $queues = [], ?callable $eachCallback = null): void
     {
-        $this->store->init();
+        $this->transport->init();
 
         while (true) {
-            if ($message = $this->store->fetchMessage($queues)) {
+            if ($message = $this->transport->fetchMessage($queues)) {
                 try {
                     $this->processing($message);
                 } catch (Throwable $throwable) {
@@ -110,7 +110,7 @@ class Consumer
      */
     protected function processing(Message $message): void
     {
-        $this->store->changeMessageStatus($message, new Status(Status::IN_PROCESS));
+        $this->transport->changeMessageStatus($message, new Status(Status::IN_PROCESS));
 
         if ($message->isJob()) {
             try {

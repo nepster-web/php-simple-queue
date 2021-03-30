@@ -1,14 +1,14 @@
 PHP Simple Queue Usage basics
 =============================
 
-An example of using this library.
+Configuration.
 
 
 ## :book: Guide
 
 * [Guide](./README.md)
 * [Install](./install.md)
-* [Store](./store.md)
+* [Transport](./transport.md)
 * **[Configuration](./configuration.md)**
 * [Producer (Send message)](./producer.md)
 * [Consuming](./consuming.md)
@@ -23,9 +23,7 @@ You need to use the same config for producer and consumer.
 
 <br>
 
-**Create config:**
-
-Detailed example:
+**Create example config:**
 
 ```php
 $config = \Simple\Queue\Config::getDefault()

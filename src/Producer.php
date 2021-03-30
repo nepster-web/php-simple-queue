@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Simple\Queue;
 
 use DateTimeImmutable;
-use Simple\Queue\Store\StoreInterface;
+use Simple\Queue\Transport\TransportInterface;
 
 /**
  * Class Producer
@@ -16,20 +16,20 @@ use Simple\Queue\Store\StoreInterface;
  */
 class Producer
 {
-    /** @var StoreInterface */
-    private StoreInterface $store;
+    /** @var TransportInterface */
+    private TransportInterface $transport;
 
     /** @var Config */
     private Config $config;
 
     /**
      * Producer constructor.
-     * @param StoreInterface $store
+     * @param TransportInterface $transport
      * @param Config|null $config
      */
-    public function __construct(StoreInterface $store, ?Config $config = null)
+    public function __construct(TransportInterface $transport, ?Config $config = null)
     {
-        $this->store = $store;
+        $this->transport = $transport;
         $this->config = $config ?: Config::getDefault();
     }
 
@@ -123,6 +123,6 @@ class Producer
      */
     public function send(Message $message): void
     {
-        $this->store->send($message);
+        $this->transport->send($message);
     }
 }

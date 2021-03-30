@@ -10,7 +10,7 @@ It supports queues based on **DB**.
 
 * **[Guide](./README.md)**
 * [Install](./install.md)
-* [Store](./store.md)
+* [Transport](./transport.md)
 * [Configuration](./configuration.md)
 * [Producer (Send message)](./producer.md)
 * [Consuming](./consuming.md)
