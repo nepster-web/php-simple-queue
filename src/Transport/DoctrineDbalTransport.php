@@ -108,8 +108,8 @@ class DoctrineDbalTransport implements TransportInterface
             $rowsAffected = $this->connection->insert(DoctrineDbalTableCreator::getTableName(), $dataMessage, [
                 'id' => Types::GUID,
                 'status' => Types::STRING,
-                'created_at' => Types::DATETIME_IMMUTABLE,
-                'redelivered_at' => Types::DATETIME_IMMUTABLE,
+                'created_at' => Types::STRING,
+                'redelivered_at' => Types::STRING,
                 'attempts' => Types::SMALLINT,
                 'queue' => Types::STRING,
                 'event' => Types::STRING,
