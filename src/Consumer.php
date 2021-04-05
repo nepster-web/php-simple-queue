@@ -115,9 +115,7 @@ class Consumer
         if ($message->isJob()) {
             try {
                 $job = $this->config->getJob($message->getEvent());
-
-                $result = $job->handle($message, $this->producer);
-
+                $result = $job->handle($this->getContext($message));
                 $this->processSuccessResult($result, $message);
             } catch (Throwable $exception) {
                 $this->processFailureResult($exception, $message);
@@ -128,8 +126,7 @@ class Consumer
 
         if ($this->config->hasProcessor($message->getQueue())) {
             try {
-                $result = $this->config->getProcessor($message->getQueue())($message, $this->producer);
-
+                $result = $this->config->getProcessor($message->getQueue())($this->getContext($message));
                 $this->processSuccessResult($result, $message);
             } catch (Throwable $exception) {
                 $this->processFailureResult($exception, $message);
@@ -204,5 +201,20 @@ class Consumer
         }
 
         throw new InvalidArgumentException(sprintf('Unsupported result status: "%s".', $status));
+    }
+
+    /**
+     * @param Message $message
+     * @return Context
+     */
+    protected function getContext(Message $message): Context
+    {
+        $data = $this->config->getSerializer()->deserialize($message->getBody());
+
+        return new Context(
+            $this->producer,
+            $message,
+            is_array($data) ? $data : [$data]
+        );
     }
 }

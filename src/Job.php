@@ -11,11 +11,10 @@ namespace Simple\Queue;
 abstract class Job
 {
     /**
-     * @param Message $message
-     * @param Producer $producer
-     * @return mixed
+     * @param Context $context
+     * @return string
      */
-    abstract public function handle(Message $message, Producer $producer): string;
+    abstract public function handle(Context $context): string;
 
     /**
      * @return string

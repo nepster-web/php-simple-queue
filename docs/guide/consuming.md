@@ -81,7 +81,7 @@ class SendInfoToTelegramJob extends \Simple\Queue\Job
         return 5;
     }
 
-    public function handle(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string
+    public function handle(\Simple\Queue\Context $context): string
     {
         // your logic 
     

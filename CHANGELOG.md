@@ -19,9 +19,10 @@ A changelog of all notable changes made to this library.
 ----------------------
 
 
-1.0.0-Alpha-4 ???? ??, 2021
+1.0.0-Alpha-4 April 7, 2021
 ---------------------------
-
+- *ENH*: [#22](https://github.com/nepster-web/php-simple-queue/issues/22) - implementation [Context](./src/Context.php) for jobs and processors
+- *ENH*: Improved documentation
 
 
 1.0.0-Alpha-3 March 31, 2021
