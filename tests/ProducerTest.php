@@ -9,6 +9,7 @@ use Simple\Queue\Job;
 use DateTimeImmutable;
 use Simple\Queue\Config;
 use Simple\Queue\Status;
+use Simple\Queue\Context;
 use Simple\Queue\Message;
 use Simple\Queue\Consumer;
 use Simple\Queue\Producer;
@@ -118,7 +119,7 @@ class ProducerTest extends TestCase
         $transport = new DoctrineDbalTransport($connection);
 
         $job = new class() extends Job {
-            public function handle(Message $message, Producer $producer): string
+            public function handle(Context $context): string
             {
                 return Consumer::STATUS_ACK;
             }

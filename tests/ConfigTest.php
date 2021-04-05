@@ -6,9 +6,8 @@ namespace Simple\QueueTest;
 
 use Simple\Queue\Job;
 use Simple\Queue\Config;
-use Simple\Queue\Message;
+use Simple\Queue\Context;
 use Simple\Queue\Consumer;
-use Simple\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\QueueException;
 use Simple\Queue\ConfigException;
@@ -58,14 +57,14 @@ class ConfigTest extends TestCase
     public function testSeveralGetJobs(): void
     {
         $job1 = new class extends Job {
-            public function handle(Message $message, Producer $producer): string
+            public function handle(Context $context): string
             {
                 return Consumer::STATUS_ACK;
             }
         };
 
         $job2 = new class extends Job {
-            public function handle(Message $message, Producer $producer): string
+            public function handle(Context $context): string
             {
                 return Consumer::STATUS_ACK;
             }
@@ -99,7 +98,7 @@ class ConfigTest extends TestCase
     public function testRegistrationJob(): void
     {
         $job = new class extends Job {
-            public function handle(Message $message, Producer $producer): string
+            public function handle(Context $context): string
             {
                 return Consumer::STATUS_ACK;
             }
@@ -119,7 +118,7 @@ class ConfigTest extends TestCase
         $this->expectExceptionMessage(sprintf('Job "%s" is already registered.', 'myJob'));
 
         $job = new class extends Job {
-            public function handle(Message $message, Producer $producer): string
+            public function handle(Context $context): string
             {
                 return Consumer::STATUS_ACK;
             }
@@ -136,7 +135,7 @@ class ConfigTest extends TestCase
         $this->expectExceptionMessage(sprintf('Job alias "%s" contains invalid characters.', '!@#$%^&*()_+'));
 
         $job = new class extends Job {
-            public function handle(Message $message, Producer $producer): string
+            public function handle(Context $context): string
             {
                 return Consumer::STATUS_ACK;
             }
@@ -149,7 +148,7 @@ class ConfigTest extends TestCase
     public function testGetAliasInRegistrationJob(): void
     {
         $job = new class extends Job {
-            public function handle(Message $message, Producer $producer): string
+            public function handle(Context $context): string
             {
                 return Consumer::STATUS_ACK;
             }

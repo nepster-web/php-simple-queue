@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Simple\QueueTest;
 
 use Simple\Queue\Job;
-use Simple\Queue\Message;
+use Simple\Queue\Context;
 use Simple\Queue\Consumer;
-use Simple\Queue\Producer;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,7 +35,7 @@ class JobTest extends TestCase
     private function generateBaseJob(): Job
     {
         return new class extends Job {
-            public function handle(Message $message, Producer $producer): string
+            public function handle(Context $context): string
             {
                 return Consumer::STATUS_ACK;
             }

@@ -59,24 +59,15 @@ $transport = new \Simple\Queue\Transport\DoctrineDbalTransport($connection);
 ```
 
 
-Create configuration ([see more information](./docs/guide/configuration.md)):
-
-```php
-$config = \Simple\Queue\Config::getDefault()
-    ->changeRedeliveryTimeInSeconds(100)
-    ->changeNumberOfAttemptsBeforeFailure(3)
-    ->registerJob(MyJob::class, new MyJob())
-    ->registerProcessor('my_queue', static function(\Simple\Queue\Message $message, \Simple\Queue\Producer $producer): string {
-   
-        // Your message handling logic
-        
-        return \Simple\Queue\Consumer::STATUS_ACK;
-    });
-```
-
 ### Send a new message to queue (producing)
 
 ```php
+$config = \Simple\Queue\Config::getDefault()
+    ->registerProcessor('my_queue', static function(\Simple\Queue\Context $context): string {
+        // Your message handling logic
+        return \Simple\Queue\Consumer::STATUS_ACK;
+    });
+    
 $producer = new \Simple\Queue\Producer($transport, $config);
 
 $message = $producer->createMessage('my_queue', ['key' => 'value']);
@@ -88,6 +79,9 @@ $producer->send($message);
 ### Job dispatching (producing)
 
 ```php
+$config = \Simple\Queue\Config::getDefault()
+    ->registerJob(MyJob::class, new MyJob());
+
 $producer = new \Simple\Queue\Producer($transport, $config);
 
 $producer->dispatch(MyJob::class, ['key' => 'value']);
