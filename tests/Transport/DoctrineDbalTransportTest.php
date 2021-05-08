@@ -59,8 +59,8 @@ class DoctrineDbalTransportTest extends TestCase
 
         self::assertEquals(Types::GUID, $connection::$data['insert']['types']['id']);
         self::assertEquals(Types::STRING, $connection::$data['insert']['types']['status']);
-        self::assertEquals(Types::DATETIME_IMMUTABLE, $connection::$data['insert']['types']['created_at']);
-        self::assertEquals(Types::DATETIME_IMMUTABLE, $connection::$data['insert']['types']['redelivered_at']);
+        self::assertEquals(Types::STRING, $connection::$data['insert']['types']['created_at']);
+        self::assertEquals(Types::STRING, $connection::$data['insert']['types']['redelivered_at']);
         self::assertEquals(Types::SMALLINT, $connection::$data['insert']['types']['attempts']);
         self::assertEquals(Types::STRING, $connection::$data['insert']['types']['queue']);
         self::assertEquals(Types::STRING, $connection::$data['insert']['types']['event']);

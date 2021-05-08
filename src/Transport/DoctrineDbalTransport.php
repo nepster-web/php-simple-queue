@@ -56,7 +56,7 @@ class DoctrineDbalTransport implements TransportInterface
             ->andWhere('exact_time <= :nowTime')
             ->addOrderBy('priority', 'asc')
             ->addOrderBy('created_at', 'asc')
-            ->setParameter('redeliveredAt', (new DateTimeImmutable('now'))->format('Y-m-d H:i:s'), Types::DATETIME_IMMUTABLE)
+            ->setParameter('redeliveredAt', (new DateTimeImmutable('now'))->format('Y-m-d H:i:s'), Types::STRING)
             ->setParameter('statuses', [Status::NEW, Status::REDELIVERED], Connection::PARAM_STR_ARRAY)
             ->setParameter('nowTime', $nowTime, Types::INTEGER)
             ->setMaxResults(1);
@@ -108,8 +108,8 @@ class DoctrineDbalTransport implements TransportInterface
             $rowsAffected = $this->connection->insert(DoctrineDbalTableCreator::getTableName(), $dataMessage, [
                 'id' => Types::GUID,
                 'status' => Types::STRING,
-                'created_at' => Types::DATETIME_IMMUTABLE,
-                'redelivered_at' => Types::DATETIME_IMMUTABLE,
+                'created_at' => Types::STRING,
+                'redelivered_at' => Types::STRING,
                 'attempts' => Types::SMALLINT,
                 'queue' => Types::STRING,
                 'event' => Types::STRING,
