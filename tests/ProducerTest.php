@@ -106,7 +106,8 @@ class ProducerTest extends TestCase
         $transport = new DoctrineDbalTransport($connection);
 
         $this->expectException(TransportException::class);
-        $this->expectExceptionMessage('The transport fails to send the message due to some internal error.');
+        $previousMessage = 'The message was not enqueued. Dbal did not confirm that the record is inserted.';
+        $this->expectExceptionMessage(sprintf('The transport fails to send the message: %s', $previousMessage));
 
         $producer = new Producer($transport);
         $producer->send(new Message('my_queue', ''));

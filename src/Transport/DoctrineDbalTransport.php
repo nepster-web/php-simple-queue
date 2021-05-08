@@ -56,7 +56,7 @@ class DoctrineDbalTransport implements TransportInterface
             ->andWhere('exact_time <= :nowTime')
             ->addOrderBy('priority', 'asc')
             ->addOrderBy('created_at', 'asc')
-            ->setParameter('redeliveredAt', new DateTimeImmutable('now'), Types::DATETIME_IMMUTABLE)
+            ->setParameter('redeliveredAt', (new DateTimeImmutable('now'))->format('Y-m-d H:i:s'), Types::STRING)
             ->setParameter('statuses', [Status::NEW, Status::REDELIVERED], Connection::PARAM_STR_ARRAY)
             ->setParameter('nowTime', $nowTime, Types::INTEGER)
             ->setMaxResults(1);
@@ -94,7 +94,7 @@ class DoctrineDbalTransport implements TransportInterface
             'id' => Uuid::uuid4()->toString(),
             'status' => $message->getStatus(),
             'created_at' => $message->getCreatedAt()->format('Y-m-d H:i:s'),
-            'redelivered_at' => $message->getRedeliveredAt(),
+            'redelivered_at' => $message->getRedeliveredAt() ? $message->getRedeliveredAt()->format('Y-m-d H:i:s') : null,
             'attempts' => $message->getAttempts(),
             'queue' => $message->getQueue(),
             'event' => $message->getEvent(),
@@ -123,7 +123,7 @@ class DoctrineDbalTransport implements TransportInterface
                 throw new TransportException('The message was not enqueued. Dbal did not confirm that the record is inserted.');
             }
         } catch (Throwable $e) {
-            throw new TransportException('The transport fails to send the message due to some internal error.', 0, $e);
+            throw new TransportException(sprintf('The transport fails to send the message: %s', $e->getMessage()), 0, $e);
         }
     }
 

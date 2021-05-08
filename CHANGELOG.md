@@ -20,6 +20,11 @@ A changelog of all notable changes made to this library.
 ----------------------
 
 
+1.0.0-Alpha-5 May 9, 2021
+---------------------------
+- *FIX*: [#28](https://github.com/nepster-web/php-simple-queue/issues/28) - set format for datetime
+
+
 1.0.0-Alpha-4 April 7, 2021
 ---------------------------
 - *ENH*: [#22](https://github.com/nepster-web/php-simple-queue/issues/22) - implementation [Context](./src/Context.php) for jobs and processors
