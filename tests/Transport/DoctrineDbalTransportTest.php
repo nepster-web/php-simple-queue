@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use Simple\Queue\Status;
 use Simple\Queue\Message;
 use Simple\Queue\Priority;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\DBAL\Schema\Table;
 use PHPUnit\Framework\TestCase;
 use Simple\Queue\QueueException;
@@ -55,6 +56,19 @@ class DoctrineDbalTransportTest extends TestCase
         self::assertEquals(Status::NEW, $connection::$data['insert']['data']['status']);
         self::assertEquals(Priority::DEFAULT, $connection::$data['insert']['data']['priority']);
         self::assertEquals(date('Y-m-d H:i:s'), $connection::$data['insert']['data']['created_at']);
+
+        self::assertEquals(Types::GUID, $connection::$data['insert']['types']['id']);
+        self::assertEquals(Types::STRING, $connection::$data['insert']['types']['status']);
+        self::assertEquals(Types::DATETIME_IMMUTABLE, $connection::$data['insert']['types']['created_at']);
+        self::assertEquals(Types::DATETIME_IMMUTABLE, $connection::$data['insert']['types']['redelivered_at']);
+        self::assertEquals(Types::SMALLINT, $connection::$data['insert']['types']['attempts']);
+        self::assertEquals(Types::STRING, $connection::$data['insert']['types']['queue']);
+        self::assertEquals(Types::STRING, $connection::$data['insert']['types']['event']);
+        self::assertEquals(Types::BOOLEAN, $connection::$data['insert']['types']['is_job']);
+        self::assertEquals(Types::TEXT, $connection::$data['insert']['types']['body']);
+        self::assertEquals(Types::SMALLINT, $connection::$data['insert']['types']['priority']);
+        self::assertEquals(Types::TEXT, $connection::$data['insert']['types']['error']);
+        self::assertEquals(Types::BIGINT, $connection::$data['insert']['types']['exact_time']);
     }
 
     public function testFetchMessageWithQueueList(): void
@@ -175,5 +189,20 @@ class DoctrineDbalTransportTest extends TestCase
         $transport->deleteMessage($message);
 
         self::assertEquals($message->getId(), $connection::$data['delete']['criteria']['id']);
+    }
+
+    public function testSendWithRedeliveredAt(): void
+    {
+        $connection = new MockConnection(null, [
+            'insert' => 1,
+        ]);
+        $transport = new DoctrineDbalTransport($connection);
+
+        $redeliveredAt = new DateTimeImmutable('now');
+        $message = (new Message('my_queue', ''))->changeRedeliveredAt($redeliveredAt);
+
+        $transport->send($message);
+
+        self::assertEquals($redeliveredAt->format('Y-m-d H:i:s'), $connection::$data['insert']['data']['redelivered_at']);
     }
 }
